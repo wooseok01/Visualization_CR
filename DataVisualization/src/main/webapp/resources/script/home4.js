@@ -39,6 +39,7 @@ var dif;
 var nameList;
 var fullData;
 var description;
+var personList = [];
 
 $('#resetButton').css({
 	left : $('#content').width() - $('#resetButton').width()-30
@@ -57,7 +58,7 @@ async.waterfall([
     	ajaxCall('./getCredosData2',init, dif, function(data){
 	    	var yDif = dif.yDif;
 	    	var xDif = dif.xDif;
-	    	var personList = [];
+	    	
 	    	for(var i=0; i<data.length; i+=4){
 			
 	    		personList.push({
@@ -205,10 +206,10 @@ function addPatient(gTag, personList, init, yDif, xDif, nameList){
 			'order' : i
 		});
 //		console.log(personList[i]);
-		graph.on('click',function(){
-			var order = $(this).attr('order')*1;
-			textClick(personList[order], $(this));
-		});
+//		graph.on('click',function(){
+//			var order = $(this).attr('order')*1;
+//			textClick(personList[order], $(this));
+//		});
 	}
 	
 	
@@ -216,42 +217,26 @@ function addPatient(gTag, personList, init, yDif, xDif, nameList){
 
 function changeNameGraphToData(array, init, order, yDif, xDif, nameGraph){
 	var innerArray = [];
-	var xQuarter = yDif/3-1;
-	var yQuarter = xDif/4;
-	var index = 0;
 	var height = nameGraph.attr('height')*1;
 	var width = nameGraph.attr('width')*1;
+	var xQuarter = yDif/3-1;
+	var yQuarter = height/4;
+	var index = 0;
+
+	var value;
 	
 	for(var i=0; i<array.length; i++){
-		if(array[i] == 'MCI' || array[i] == 'VCI'){
-//			console.log('N');
-			innerArray.push({
-				x : yDif*order + xQuarter*index + nameGraph.attr('x')*1,
-				y : height-(2*yQuarter) + nameGraph.attr('y')*1
-			});
-			index++;
-		}else if(array[i] == 'SMI'){
-//			console.log('good');
-			innerArray.push({
-				x : yDif*order + xQuarter*index + nameGraph.attr('x')*1,
-				y : height-(3*yQuarter) + nameGraph.attr('y')*1
-			});
-			index++;
-		}else if(array[i] == 'SVD' || array[i] == 'AD'){
-//			console.log('bad');
-			innerArray.push({
-				x : yDif*order + xQuarter*index + nameGraph.attr('x')*1,
-				y : height-(1*yQuarter) + nameGraph.attr('y')*1
-			});
-			index++;
-		}else if(array[i] == '#N/A'){
-//			console.log('null');
-			innerArray.push({
-				x : yDif*order + xQuarter*index + nameGraph.attr('x')*1,
-				y : height-(0*yQuarter) + nameGraph.attr('y')*1
-			});
-			index++;
-		}
+		
+		if(array[i] == 'MCI' || array[i] == 'VCI'){value = 2;}
+		else if(array[i] == 'SMI'){value = 3;}
+		else if(array[i] == 'SVD' || array[i] == 'AD'){value = 1;}
+		else if(array[i] == '#N/A'){value = 0;}
+		
+		innerArray.push({
+			x : yDif*order + xQuarter*index + nameGraph.attr('x')*1,
+			y : height-(value*yQuarter) + nameGraph.attr('y')*1
+		});
+		index++;
 	}
 	return innerArray;
 }
@@ -531,9 +516,9 @@ function init(){
 	
 	var nameGraph = svg.append('rect').attr({
 		x : padding,
-		y : padding-padding/3-5,
+		y : padding-(padding/4)-5,
 		width : graphW,
-		height : padding/3,
+		height : padding/4,
 		fill : 'none',
 		stroke : 'none'
 	});
@@ -800,6 +785,9 @@ function drawSmallCell(root, eachTest,x, y, dif, color, testName){
 //						$(this).parent().find('text').attr('fill','rgba(0,0,0,0.8)');
 						$(this).parent().find('path').attr('stroke','rgba(0,0,0,0.8)');
 						$('.gGuide').remove();
+					}).on('click', function(){
+						var order = $(this).parent().find('path').attr('order')*1;
+						textClick(personList[order], $(this).parent().find('path'));
 					});
 	}
 }
