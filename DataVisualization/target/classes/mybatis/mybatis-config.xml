@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE configuration  
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<!-- Type alias -->
+	<typeAliases>
+		<typeAlias alias="Consult" type="com.ajou.visualization.model.Consult"/>
+		<typeAlias alias="Consult2" type="com.ajou.visualization.model.Consult2"/>
+		<typeAlias alias="Description" type="com.ajou.visualization.model.Description"/>
+		
+			
+	</typeAliases>
+
+	<!-- UserMap.xml 등록 -->
+	<mappers>
+		<mapper resource="com/ajou/visualization/mapper/AllDaoMapper.xml" />
+		
+	</mappers>
+</configuration> 

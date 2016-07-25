@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ajou.visualization.mapper.AllDaoInterface">
+	<select id="getCredosData" parameterType="hashmap" resultType="Consult">
+		select * from 
+		<choose>
+			<when test="number == 1">dxFirst</when>
+			<when test="number == 2">dxSecond</when>
+			<when test="number == 3">dxThird</when>
+			<when test="number == 4">dxFourth</when>
+			<when test="number == 5">dxFifth</when>
+			<when test="number == 6">dxSixth</when>
+		</choose>
+		 order by pGroup, pName;
+	</select>
+	
+	<select id="getCredosData2" resultType="Consult2">
+		select * from dataUnion
+		order by pGroup,name,inDate;
+	</select>
+	
+	<select id="getPatientName" resultType="string">
+		select name from dataUnion
+		group by name
+		order by name;
+	</select>
+	
+	<select id="getMeaningValue" parameterType="string" resultType="Consult2">
+		select p.q_kdsq_1 as q_kdsq_1, p.q_kdsq_13 as q_kdsq_13, p.q_kdsq_14 as q_kdsq_14, 
+			   p.q_kdsq_15 as q_kdsq_15, p.a_barthel_3 as a_barthel_3, p.a_barthel_8 as a_barthel_8, 
+		       p.a_barthel_10 as a_barthel_10, p.a_siadl_c1 as a_siadl_c1, p.a_siadl_c2 as a_siadl_c2, 
+		       p.a_siadl_p2 as a_siadl_p2, p.a_siadl_c3 as a_siadl_c3, p.a_siadl_p3 as a_siadl_p3, 
+		       p.a_siadl_c4 as a_siadl_c4, p.a_siadl_p4 as a_siadl_p4, p.a_siadl_p5 as a_siadl_p5, 
+		       p.a_siadl_c6 as a_siadl_c6, p.a_siadl_p6 as a_siadl_p6, p.a_siadl_c7 as a_siadl_c7,
+		       p.a_siadl_c8 as a_siadl_c8, p.a_siadl_p8 as a_siadl_p8, p.a_siadl_p9 as a_siadl_p9, 
+		       p.a_siadl_c13 as a_siadl_c13, p.a_siadl_p13 as a_siadl_p13, p.a_siadl_c14 as a_siadl_c14, 
+		       p.a_siadl_p14 as a_siadl_p14, p.a_siadl_c15 as a_siadl_c15, p.a_siadl_p15 as a_siadl_p15, 
+		       p.km_o_t_1 as km_o_t_1, p.km_o_t_2 as km_o_t_2, p.km_o_t_3 as km_o_t_3, p.km_o_t_4 as km_o_t_4, 
+		       p.km_o_t_5 as km_o_t_5, p.km_o_p_2 as km_o_p_2, p.km_o_p_4 as km_o_p_4,
+		       p.km_o_p_5
+		from dataPattern p 
+		join dataUnion u 
+		on u.name = p.name 
+		and u.pGroup = #{value} 
+		group by u.name;
+	</select>
+	
+	<select id="getDescription" resultType="Description">
+		select * from dataDescription;
+	</select>
+</mapper>
