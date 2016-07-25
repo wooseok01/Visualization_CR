@@ -149,9 +149,9 @@ async.waterfall([
     			30, 30, 10, 'green', 'sample', '2회차').style('font-size',10);
     	
     	drawRect(initParallel.svg, 
-    			10, 50, 10, 10, 'yellow', 'sample', '');
+    			10, 50, 10, 10, 'rgba(239,155,15,1)', 'sample', '');
     	drawText(initParallel.svg, 
-    			30, 50, 10, 'yellow', 'sample', '3회차').style('font-size',10);
+    			30, 50, 10, 'rgba(239,155,15,1)', 'sample', '3회차').style('font-size',10);
     	
     	drawRect(initParallel.svg, 
     			10, 70, 10, 10, 'red', 'sample', '');
@@ -190,6 +190,24 @@ async.waterfall([
 });
 
 function addPatient(gTag, personList, init, yDif, xDif, nameList){
+	var guideText = ['#N/A', 'SVD&AD', 'MCI&VCI', 'SMI'];
+	var colorArray = ['rgb(46,119,73)', 'rgb(215,155,43)', 'rgb(227,90,60)', 'gray']
+	//요기요기
+	var dif = init.nameGraph.attr('height')*1;
+	var nameYDif = init.nameGraph.attr('y')*1;
+	for(var i=0; i<=3; i++){
+		drawLine(init.svg, 
+				init.nameGraph.attr('x')*1-20, dif/4*i+ nameYDif + dif/4, 
+				init.nameGraph.attr('x')*1+init.nameGraph.attr('width')*1, dif/4*i+nameYDif + dif/4,
+				0.2, 'rgba(0,0,0,0.4)', 'nameGraphGuideLine');
+		drawText(init.svg, 
+				init.nameGraph.attr('x')*1-25, dif/4*i+nameYDif, 
+				init.nameGraph.attr('height')*1/4, colorArray[i], 'nameGraphGuideText', guideText[3-i]).style({
+					'font-size' : '5px',
+					'text-anchor' : 'end'
+				});
+	}
+		
 	
 	for(var i=0; i<personList.length; i++){
 		var array = [];
@@ -205,11 +223,6 @@ function addPatient(gTag, personList, init, yDif, xDif, nameList){
 			'id': nameList[i],
 			'order' : i
 		});
-//		console.log(personList[i]);
-//		graph.on('click',function(){
-//			var order = $(this).attr('order')*1;
-//			textClick(personList[order], $(this));
-//		});
 	}
 	
 	
@@ -451,7 +464,7 @@ function drawParallelGraph(person){
 
 	drawGraph(initParallel.svg, first, 'graph','skyblue',8).style('opacity',0.7);
 	drawGraph(initParallel.svg, second, 'graph','green',5).style('opacity',0.7);
-	drawGraph(initParallel.svg, third, 'graph','yellow',3).style('opacity',0.7);
+	drawGraph(initParallel.svg, third, 'graph','rgba(239,155,15,1)',3).style('opacity',0.7);
 	drawGraph(initParallel.svg, fourth, 'graph','red',1).style('opacity',0.7);
 	
 }

@@ -103,3 +103,7 @@ text:hover{
 .vertical{
     font-size : 2px;
 }
+
+circle:HOVER {
+    cursor: pointer;
+}
