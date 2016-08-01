@@ -40,6 +40,7 @@ var nameList;
 var fullData;
 var description;
 var personList = [];
+var nameGraphGuideLineList = [];
 
 $('#resetButton').css({
 	left : $('#content').width() - $('#resetButton').width()-30
@@ -77,9 +78,9 @@ async.waterfall([
 		   		gTagList.push(gTag);
 		   		
 		   		
-		   		if(i<13) gTag.attr('class','rOrder'+i+' Better');
-		   		else if(i<19) gTag.attr('class','rOrder'+i+' BetterWorse');
-		   		else if(i<39) gTag.attr('class','rOrder'+i+' Maintain');
+		   		if(i<12) gTag.attr('class','rOrder'+i+' Better');
+		   		else if(i<18) gTag.attr('class','rOrder'+i+' BetterWorse');
+		   		else if(i<36) gTag.attr('class','rOrder'+i+' Maintain');
 		   		else if(i<54) gTag.attr('class','rOrder'+i+' Worse');
 		   		else gTag.attr('class','rOrder'+i+' WorseBetter');
 //		   		console.log(nameList);
@@ -190,42 +191,130 @@ async.waterfall([
 });
 
 function addPatient(gTag, personList, init, yDif, xDif, nameList){
-	var guideText = ['#N/A', 'SVD&AD', 'MCI&VCI', 'SMI'];
-	var colorArray = ['rgb(46,119,73)', 'rgb(215,155,43)', 'rgb(227,90,60)', 'gray']
+	var guideText = ['SVD&AD', 'MCI&VCI', 'SMI'];
+	var colorArray = ['rgb(46,119,73)', 'rgb(215,155,43)', 'rgb(227,90,60)']
 	//요기요기
 	var dif = init.nameGraph.attr('height')*1;
 	var nameYDif = init.nameGraph.attr('y')*1;
-	for(var i=0; i<=3; i++){
+	for(var i=0; i<=2; i++){
 		drawLine(init.svg, 
-				init.nameGraph.attr('x')*1-20, dif/4*i+ nameYDif + dif/4, 
-				init.nameGraph.attr('x')*1+init.nameGraph.attr('width')*1, dif/4*i+nameYDif + dif/4,
-				0.2, 'rgba(0,0,0,0.4)', 'nameGraphGuideLine');
+				init.nameGraph.attr('x')*1-20, dif/3*i+ nameYDif + dif/4, 
+				init.nameGraph.attr('x')*1+init.nameGraph.attr('width')*1, dif/3*i+nameYDif + dif/4,
+				0.2, 'rgba(0,0,0,0.4)', 'nameGraphGuideLine '+guideText[2-i]);
+		nameGraphGuideLineList.push(dif/3*i+ nameYDif + dif/4);
 		drawText(init.svg, 
-				init.nameGraph.attr('x')*1-25, dif/4*i+nameYDif, 
-				init.nameGraph.attr('height')*1/4, colorArray[i], 'nameGraphGuideText', guideText[3-i]).style({
+				init.nameGraph.attr('x')*1-25, dif/3*i+nameYDif, 
+				init.nameGraph.attr('height')*1/3, colorArray[i], 'nameGraphGuideText', guideText[2-i]).style({
 					'font-size' : '5px',
 					'text-anchor' : 'end'
 				});
 	}
 		
+	var array = [];
 	
 	for(var i=0; i<personList.length; i++){
-		var array = [];
 		var group = personList[i].first.pGroup;
 		array.push(personList[i].first.dx);
 		array.push(personList[i].second.dx);
 		array.push(personList[i].third.dx);
 		array.push(personList[i].fourth.dx);
-//		console.log(changeNameGraphToData(array, init.nameGraph, i, yDif, xDif, init.nameGraph));
-		var graph = drawGraph(gTag[i], changeNameGraphToData(array, init.nameGraph, i, yDif, xDif, init.nameGraph), 
-				nameList[i]+'graph', 'rgba(0,0,0,1)', 1, 'linear');
-		graph.attr({
-			'id': nameList[i],
-			'order' : i
-		});
+		
+		drawNameGraph(array, init, i, yDif, xDif, init.nameGraph, gTag[i], nameList[i]+'graph', nameList[i]);
+		
+//		if(nullCount == 0){
+//			var graph = drawGraph(gTag[i], changeNameGraphToData(array, init.nameGraph, i, yDif, xDif, init.nameGraph), 
+//					nameList[i]+'graph', 'rgba(0,0,0,1)', 1, 'linear');
+//			graph.attr({
+//				'id': nameList[i],
+//				'order' : i
+//			});
+//		}else{
+//			
+//		}
+		array = [];
+	}	
+}
+
+function drawNameGraph(array, init, order, yDif, xDif, nameGraph, gTag, className, id){
+	var backPos;
+	var xQuarter = yDif/4;
+	var yQuarter = xDif/3;
+	var value = 0;
+	var plag = false;
+	var width = nameGraph.attr('width')*1;
+	var height = nameGraph.attr('height')*1;
+	var y = nameGraph.attr('y')*1;
+	var x = nameGraph.attr('x')*1;
+	
+	for(var i=0; i<array.length-1; i++){
+		if(array[i] != '#N/A' && array[i+1] != '#N/A'){
+			var graph = drawLine(gTag, 
+					x + yDif*order + xQuarter*i, changePhaseToValue(array[i]), 
+					x + yDif*order + xQuarter*(i+1), changePhaseToValue(array[i+1]), 
+					1, 'rgba(0,0,0,1)', className+' mouseOverChange');
+			if(!plag){
+				plag = true;
+				var beforeClass = graph.attr('class');
+				graph.attr({
+					id : id,
+					order : order,
+					'class' : beforeClass + ' nameFirst'
+				});
+				backPos = changePhaseToValue(array[i+1]);
+			}
+		}else{
+			var graph;
+			if(array[i] == '#N/A' && array[i+1] == '#N/A'){
+				graph = drawLine(gTag,
+						x + yDif*order + xQuarter*i , backPos, 
+						x + yDif*order + xQuarter*(i+1), backPos, 
+						1, 'rgba(0,0,0,0.3)', className+' mouseOverChange'+' opacityDown');
+				backPos = graph.attr('y1')*1;
+			}else if(array[i] == '#N/A' && array[i+1] != '#N/A'){
+				graph = drawLine(gTag,
+						x + yDif*order + xQuarter*i , backPos, 
+						x + yDif*order + xQuarter*(i+1), changePhaseToValue(array[i+1]), 
+						1, 'black', className+' mouseOverChange');
+				backPos = changePhaseToValue(array[i+1]);
+			}else if(array[i+1] == '#N/A'){
+				graph = drawLine(gTag,
+						x + yDif*order + xQuarter*i , changePhaseToValue(array[i]), 
+						x + yDif*order + xQuarter*(i+1), changePhaseToValue(array[i]), 
+						1, 'rgba(0,0,0,0.3)', className+' mouseOverChange'+' opacityDown');
+				backPos = changePhaseToValue(array[i]);
+			}
+			
+			if(!plag){
+				plag = true;
+				var beforeClass = graph.attr('class');
+				graph.attr({
+					id : id,
+					order : order,
+					'class' : beforeClass + ' nameFirst'
+				});
+			}
+		}
 	}
-	
-	
+//	for(var i=0; i<array.length; i++){
+//		if(array[i] != '#N/A'){
+//			if(array[i] == 'SMI'){value = 3;}
+//			else if(array[i] == 'MCI' || array[i] == 'VCI'){value = 2;}
+//			else if(array[i] == 'SVD' || array[i] == 'AD'){value = 1;}
+//			drawLine(gTag, yDif*order + xQuarter*i, y1, x2, y2, strokeWidth, stroke, addClass)
+//		}else{
+//			
+//		}
+//	}
+}
+
+function changePhaseToValue(phase){
+	if(phase == 'MCI' || phase == 'VCI'){
+		return nameGraphGuideLineList[1];
+	}else if(phase == 'SMI'){
+		return nameGraphGuideLineList[0];
+	}else if(phase == 'SVD' || phase == 'AD'){
+		return nameGraphGuideLineList[2];
+	}
 }
 
 function changeNameGraphToData(array, init, order, yDif, xDif, nameGraph){
@@ -281,6 +370,7 @@ function changeNameGraphToData(array, init, order, yDif, xDif, nameGraph){
 function textClick(personList, thisValue){
 	
 	var id = thisValue.attr('id');
+	console.log('id->'+id);
 	var order = $('#'+id).parent().attr('class').replace('rOrder','');
 	
 	var obj = personList;
@@ -585,43 +675,43 @@ function drawGuideLine(init, data, dif){
 		
 		drawLine(init.svg, 
 				init.padding, init.padding+init.graphH+xDif, 
-				init.padding+yDif*13-5, init.padding+init.graphH+xDif, 
+				init.padding+yDif*12-5, init.padding+init.graphH+xDif, 
 				2, 'rgba(96,193,233,1)', 'betterGroup');
 				
 		drawText(init.svg, 
-				(init.padding+init.padding+yDif*13-5)/2-10, init.padding+init.graphH+xDif, 
+				(init.padding+init.padding+yDif*12-5)/2-10, init.padding+init.graphH+xDif, 
 				20, 'rgba(96,193,233,1)', 'betterText', 'Better');
 		
 		drawLine(init.svg, 
-				init.padding+yDif*13+5, init.padding+init.graphH+xDif, 
-				init.padding+yDif*19-5, init.padding+init.graphH+xDif, 
+				init.padding+yDif*12+5, init.padding+init.graphH+xDif, 
+				init.padding+yDif*18-5, init.padding+init.graphH+xDif, 
 				2, 'rgba(251,181,50,1)', 'betterWorseGroup');
 		drawText(init.svg, 
-				(init.padding+yDif*13+5+init.padding+yDif*19-5)/2-40, init.padding+init.graphH+xDif, 
+				(init.padding+yDif*12+5+init.padding+yDif*18-5)/2-40, init.padding+init.graphH+xDif, 
 				20, 'rgba(251,181,50,1)', 'betterworseText', 'BetterWorse');
 		
 		drawLine(init.svg, 
-				init.padding+yDif*19+5, init.padding+init.graphH+xDif, 
-				init.padding+yDif*39-5, init.padding+init.graphH+xDif, 
+				init.padding+yDif*18+5, init.padding+init.graphH+xDif, 
+				init.padding+yDif*36-5, init.padding+init.graphH+xDif, 
 				2, 'rgba(46,119,73,1)', 'maintainGroup');
 		drawText(init.svg, 
-				(init.padding+yDif*19+5+init.padding+yDif*39-5)/2-35, init.padding+init.graphH+xDif, 
+				(init.padding+yDif*18+5+init.padding+yDif*36-5)/2-35, init.padding+init.graphH+xDif, 
 				20, 'rgba(46,119,73,1)', 'maintainText', 'Maintain');
 		
 		drawLine(init.svg, 
-				init.padding+yDif*39+5, init.padding+init.graphH+xDif, 
-				init.padding+yDif*54-5, init.padding+init.graphH+xDif, 
+				init.padding+yDif*36+5, init.padding+init.graphH+xDif, 
+				init.padding+yDif*56-5, init.padding+init.graphH+xDif, 
 				2, 'rgba(227,90,60,1)', 'worseGroup');
 		drawText(init.svg, 
-				(init.padding+yDif*39+5+init.padding+yDif*54-5)/2-15, init.padding+init.graphH+xDif, 
+				(init.padding+yDif*36+5+init.padding+yDif*56-5)/2-15, init.padding+init.graphH+xDif, 
 				20, 'rgba(227,90,60,1)', 'worseText', 'Worse');
 
 		drawLine(init.svg, 
-				init.padding+yDif*54+5, init.padding+init.graphH+xDif, 
+				init.padding+yDif*56+5, init.padding+init.graphH+xDif, 
 				init.padding+yDif*59-5, init.padding+init.graphH+xDif, 
 				2, 'rgba(248,121,49,1)', 'worsebtterGroup');
 		drawText(init.svg, 
-				init.padding+yDif*54+10, init.padding+init.graphH+xDif, 
+				init.padding+yDif*56, init.padding+init.graphH+xDif, 
 				20, 'rgba(248,121,49,1)', 'worsebetterText', 'WorseBetter');
 	}
 	
@@ -635,7 +725,7 @@ function drawGuideLine(init, data, dif){
 		var lastY = init.padding+init.graphH;
 		var strokeWidth = 1;
 		
-		if(i==13 || i==19 || i==39 || i==54 || i==59){
+		if(i==12 || i==18 || i==36 || i==56 || i==59){
 			lastY += 20;
 			strokeWidth +=2;
 			index = 1;
@@ -772,7 +862,8 @@ function drawSmallCell(root, eachTest,x, y, dif, color, testName){
 						pOrder = pOrder.substring('pOrder'.length, pOrder.length)*1;
 						
 //						$(this).parent().find('text').attr('fill','red');
-						$(this).parent().find('path').attr('stroke','red');
+						$(this).parent().find('.mouseOverChange').attr('stroke','red');
+						$(this).parent().find('.opacityDown').attr('stroke','rgba(255,0,0,0.3)');
 						d3.select('#'+test).attr('fill','red');
 						drawRect(init.svg, 
 								init.padding+(dif.yDif*order), init.padding, 
@@ -796,11 +887,13 @@ function drawSmallCell(root, eachTest,x, y, dif, color, testName){
 //						d3.select('#'+test).attr('fill','rgba(255,255,255,0.8)');
 						d3.select('#'+test).attr('fill','rgba(0,0,0,0.8)');
 //						$(this).parent().find('text').attr('fill','rgba(0,0,0,0.8)');
-						$(this).parent().find('path').attr('stroke','rgba(0,0,0,0.8)');
+						$(this).parent().find('.mouseOverChange').attr('stroke','rgba(0,0,0,1)');
+						$(this).parent().find('.opacityDown').attr('stroke', 'rgba(0,0,0,0.3)');
 						$('.gGuide').remove();
 					}).on('click', function(){
-						var order = $(this).parent().find('path').attr('order')*1;
-						textClick(personList[order], $(this).parent().find('path'));
+						var order = $(this).parent().find('.nameFirst').attr('order')*1;
+						console.log(order);
+						textClick(personList[order], $(this).parent().find('.nameFirst'));
 					});
 	}
 }
