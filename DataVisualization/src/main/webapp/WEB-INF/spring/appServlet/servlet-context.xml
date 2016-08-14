@@ -57,6 +57,10 @@
 	<beans:bean id="GetCredosData2" class="com.ajou.visualization.action.GetCredosData2">
 		<beans:property name="dao" ref="AllDao"></beans:property>
 	</beans:bean>
+
+	<beans:bean id="GetCredosData3" class="com.ajou.visualization.action.GetCredosData3">
+		<beans:property name="dao" ref="AllDao"></beans:property>
+	</beans:bean>
 	
 	
 	

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ajou.visualization.action.GetCredosData;
 import com.ajou.visualization.action.GetCredosData2;
+import com.ajou.visualization.action.GetCredosData3;
 import com.ajou.visualization.dao.AllDao;
 import com.ajou.visualization.model.Consult;
 import com.ajou.visualization.model.Consult2;
@@ -33,6 +34,7 @@ public class HomeController {
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	private GetCredosData credosData;
 	private GetCredosData2 credosData2;
+	private GetCredosData3 credosData3;
 	private AllDao dao;
 	
 	
@@ -47,6 +49,10 @@ public class HomeController {
 	@Autowired
 	public void setCredosData2(GetCredosData2 credosData2) {this.credosData2 = credosData2;}
 	public GetCredosData2 getCredosData2() {return credosData2;}
+	
+	@Autowired
+	public void setCredosData3(GetCredosData3 credosData3) {this.credosData3 = credosData3;}
+	public GetCredosData3 getCredosData3() {return credosData3;}
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
@@ -70,11 +76,34 @@ public class HomeController {
 		
 		return "home3";
 	}
+	
 	@RequestMapping(value = "/fourth", method = RequestMethod.GET)
 	public String fourth(Locale locale, Model model) {
 		logger.info("Welcome home! The client locale is {}.", locale);
 		
 		return "home4";
+	}
+	
+	@RequestMapping(value = "/five", method = RequestMethod.GET)
+	public String fifth(Locale locale, Model model) {
+		logger.info("Welcome home! The client locale is {}.", locale);
+		
+		return "home5";
+	}
+	
+	@RequestMapping(value = "/sixth", method = RequestMethod.GET)
+	public String sixth(Locale locale, Model model) {
+		logger.info("Welcome home! The client locale is {}.", locale);
+		
+		return "home6";
+	}
+	
+	@RequestMapping("/getCredosData3")
+	public @ResponseBody JSONArray getCredosData3(Model model, HttpServletRequest request){
+		ArrayList<Consult2> consultList = credosData3.getCredosData();
+		JSONArray jArray = JSONArray.fromObject(consultList);
+		
+		return jArray; 
 	}
 	
 	

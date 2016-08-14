@@ -19,6 +19,16 @@
 		select * from dataUnion
 		order by pGroup,name,inDate;
 	</select>
+
+	<select id="getCredosData3" resultType="Consult2">
+		select * from dataUnion
+		<where>
+			pGroup = 'maintain' or
+			pGroup = 'worse' or 
+			pGroup = 'worseBetter'		
+		</where>
+		order by pGroup, name, inDate;
+	</select>
 	
 	<select id="getPatientName" resultType="string">
 		select name from dataUnion

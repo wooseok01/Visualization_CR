@@ -13,5 +13,7 @@ public interface AllDaoInterface {
 	public ArrayList<String> getPatientName();
 	public ArrayList<Consult2> getMeaningValue(String value);
 	public ArrayList<Description> getDescription();
+	public ArrayList<Consult2> getCredosData3();
+	public ArrayList<String> getPatientName2();
 
 }

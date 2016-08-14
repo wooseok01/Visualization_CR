@@ -53,6 +53,15 @@ public class AllDao {
 	public ArrayList<Description> getDescription() {
 		return sqlSession.getMapper(AllDaoInterface.class).getDescription();
 	}
+
+	public ArrayList<Consult2> getCredosData3() {
+		return sqlSession.getMapper(AllDaoInterface.class).getCredosData3();
+	}
+
+	public ArrayList<String> getPatientName2() {
+		// TODO Auto-generated method stub
+		return sqlSession.getMapper(AllDaoInterface.class).getPatientName2();
+	}
 	
 	
 }
