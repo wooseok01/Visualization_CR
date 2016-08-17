@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.ajou.visualization.dao.AllDao;
 import com.ajou.visualization.model.Consult2;
 import com.ajou.visualization.model.Description;
+import com.ajou.visualization.model.SimilarityPerson;
 
 public class GetCredosData2 {
 	private AllDao dao;
@@ -77,5 +78,13 @@ public class GetCredosData2 {
 	
 	public ArrayList<Description> getDescription(){
 		return dao.getDescription();
+	}
+
+	public ArrayList<SimilarityPerson> getSimilarityPerson() {
+		return dao.getSimilarityPerson();
+	}
+
+	public ArrayList<String> getSimilarityColumn() {
+		return dao.getSimilarityColumn();
 	}
 }

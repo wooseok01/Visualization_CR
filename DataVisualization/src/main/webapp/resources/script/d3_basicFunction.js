@@ -109,3 +109,23 @@ function drawCircle(root, cx, cy, r, color, className){
 	
 	return circle;
 }
+
+
+//function drawPath(root, curveData, stroke, strokeWidth, className){
+//	var diagonal = d3.svg.diagonal()
+//	.source(function(d) {return {"x":d[0].y, "y":d[0].x}; })            
+//    .target(function(d) {return {"x":d[1].y, "y":d[1].x}; })
+//    .projection(function(d) { return [d.y, d.x]; });
+//	
+//	var path = root.datum(curveData)
+//	.append('path')
+//	.attr({
+//		d : diagonal,
+//		stroke : stroke,
+//		'stroke-width' : strokeWidth,
+//		'class' : className,
+//		fill : 'none'
+//	});
+//	
+//	return path;
+//}

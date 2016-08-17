@@ -7,9 +7,38 @@ var questions = ['a_barthel_3','a_barthel_8','a_barthel_10','a_siadl_p9','km_o_t
                  'a_siadl_c14','a_siadl_c15','a_siadl_p15'];
 
 var dif;
+var treeDif;
 var init = init();
+var treeInit = treeInit();
 var nameList = [];
 var personList = [];
+var plusAxis;
+var plusYxis;
+var minusAxis;
+var minusYxis;
+
+//tree와 matrix연동 전에 임시 개발을 위한 변수
+var treePerson = [];
+var treeNameList = [];
+//var treeNameList = ['MjcwODE1LTEwNjM2MTEg', 'MjgwNjA2LTIwNjM2MTAg', 'MjgxMjMwLTExMTEwMTEg', 'MjkwMjI2LTEwNTg0MTcg', 
+//                    'MjkwMjI2LTIwMzcyMjkg', 'MjkwMTAxLTIwMzc0Mjkg', 'MjkwNDA5LTEwMzc4Mjcg', 'MjkwNDE3LTIzNTc1MTQg',
+//                    'MjkwODE3LTEwNjk1MTEg', 'MjkwOTI1LTI3MDE2MTgg', 'MjkxMTIwLTIwMzY1MTQg', 'MjMwMzEyLTE4MjkyMTQg',
+//                    'MjUwMjAxLTEwMjU0MTQg', 'MjUwNDI4LTI2NzA5MTAg', 'MzAwMTI0LTIwMDU3MTYg', 'MzAwNjEwLTEwNDc4MTUg',
+//                    'MzAwNjIxLTEwMTc0MTMg', 'MzAwNjIyLTIwNTExMjUg', 'MzAwNzMwLTE0NzA2MTgg', 'MzAwODA3LTEwMDU4MTAg',
+//                    'MzAxMDI4LTI0ODExMTcg', 'MzcwMTA1LTI1NTE0MTMg', 'MzcwNDAxLTExNDk0MTUg', 'MzEwODI4LTI5MjcyMTEg', 
+//                    'MzEwOTI0LTIwMzYxMTEg', 'MzExMTExLTIwMzc5MjEg', 'MzgwMjA0LTIyMjk4MTYg', 'MzgwNDI1LTIwMTc3MTcg', 
+//                    'MzgxMTA1LTIwMTczMTIg', 'MzIwNjA3LTIwNDIxMjgg', 'MzIwNjEyLTEwNDc3MTEg', 'MzIwNzAxLTIwNDI0MTUg',
+//                    'MzIwOTE4LTExNjMwMTMg', 'MzIxMjI5LTIxNjkzMTUg', 'MzkwNTAxLTEwNzQzNDEg', 'MzMwMjI1LTIwMDA3MTEg', 
+//                    'MzMxMjAyLTIwNjY5MTIg', 'MzMxMTA3LTIwNjkwMTAg', 'MzQwMjIxLTI3Nzc4MTEg', 'MzQxMjIwLTEwNTIwMTQg',
+//                    'MzUwMjE1LTIwMTkyMjgg', 'MzUwMTAxLTIwMDAzMTEg', 'MzUxMjA1LTI1NTI3MTcg', 'MzUxMjAyLTIwNDIyMTcg',
+//                    'MzYwMTIwLTIwMzczMTkg', 'MzYwMzA4LTIwNzQ0MTcg', 'MzYwNTIxLTEwNDE5MTQg', 'MzYwOTE1LTI4OTQ0MTQg',
+//                    'MzYxMDAxLTE1NDI5MjYg', 'MzYxMjAyLTIxMDg3MTkg', 'NDAwOTIwLTEwMjM1MjUg', 'NDAxMDE1LTEyMzE3MTEg',
+//                    'NDcwMzE1LTIxMDYyMjgg', 'NDcxMTE2LTIwNTI0MTQg', 'NDEwMTIwLTExNjIzMTgg', 'NDEwNjAyLTExMDA3MTUg',
+//                    'NDEwODEzLTI0NzE2MTEg', 'NDEwODI1LTE3OTgxMTEg', 'NDExMjE1LTE0NjY3Mjkg', 'NDgwNzA5LTI4MTQ2MTMg',
+//                    'NDIxMjEyLTIwMjM1MTgg', 'NDkxMjE1LTIwNTYyMzgg', 'NDMwMzIzLTEwNDI3MTEg', 'NDMwOTAyLTEwMTEyMTgg',
+//                    'NDMxMTEwLTIxMTk4MTkg', 'NTAwMzIyLTI4MDc4Mjcg', 'NTQwODA4LTE5MzA0MTgg'];
+
+
 
 d3.selection.prototype.moveToFront = function() {  
 	return this.each(function(){
@@ -58,6 +87,25 @@ async.waterfall([
     	dataInputMatrix(init);
     	d3.selectAll('.verticalGuideLine').moveToFront();
 
+    	cb(null);
+    }, function(cb){
+    	ajaxCall('./getSimilarityPerson', init, dif, function(data){
+    		cb(null, data);
+    	});
+    	
+    }, function(data, cb){
+    	// draw tree
+    	//basic triangle
+    	treePerson = data;
+    	drawBasicTriangle(treeInit);
+    	cb(null);
+    }, function(cb){
+    	ajaxCall('./getSimilarityColumn', init, dif, function(data){
+    		cb(null,data);
+    	});
+    },function(data, cb){
+    	treeNameList = data;
+    	drawSimilarityCircle();
     	cb(null, 'done');
     }
     ],
@@ -70,8 +118,118 @@ async.waterfall([
 		
 });
 
+// user define function
+// tree
+function treeInit(){
+	var width = $('#treeArea').width()*1;
+	var height = $('#treeArea').height()*1;
+	var padding = 20;
+	var graphW = width - padding*2 - 30;
+	var graphH = height - padding;
+	
+	var svg = d3.select('#treeArea').append('svg').attr({
+		width : width,
+		height : height
+	});
+	
+	var treeRoot = svg.append('rect').attr({
+		x : padding + 30,
+		y : 10,
+		width : graphW,
+		height : graphH,
+		fill : 'none',
+		stroke : 'none',
+		id : 'treeSvg'
+	});
+	
+	return {
+		svg : svg,
+		treeRoot : treeRoot,
+		padding : padding,
+		graphW : graphW,
+		graphH : graphH
+	};
+}
+
+function drawBasicTriangle(treeInit){
+	var x = treeInit.treeRoot.attr('x')*1;
+	var y = treeInit.treeRoot.attr('y')*1;
+	var height = treeInit.treeRoot.attr('height')*1;
+	var width = treeInit.treeRoot.attr('width')*1;
+	
+	var middleX = (x + (x+width))/2;
+	
+	drawLine(treeInit.svg, 
+			x, y+height, 
+			middleX, y, 
+			0.5, 'rgba(255,255,255,0.5)', 'basicTriangle');
+	plusAxis = height/(middleX-x);
+	plusYxis = y - plusAxis*x;
+	
+	drawLine(treeInit.svg, 
+			x+width, y+height, 
+			middleX, y, 
+			0.5, 'rgba(255,255,255,0.5)', 'basicTriangle');
+	minusAxis = height/(middleX - x+width);
+	minusYxis = y - minusAxis*(x+width);
+	drawLine(treeInit.svg, 
+			x, y+height, 
+			x+width, y+height, 
+			0.5, 'rgba(255,255,255,0.5)', 'basicTriangle');
+	
+	treeDif = {
+			xDif : width/treePerson.length,
+			yDif : height/treePerson.length
+	};
+}
+
+function drawSimilarityCircle(){
+	var x = treeInit.treeRoot.attr('x')*1;
+	var y = treeInit.treeRoot.attr('y')*1;
+	var width = treeInit.treeRoot.attr('width')*1;
+	var height = treeInit.treeRoot.attr('height')*1;
+	var similarityArr = getSimilarityCircleData();
+	var yDif = height/similarityArr.length;
+	var firstXDif = width/similarityArr.length/2;
+	var xDif = width/similarityArr.length;
+	
+	for(var i=0; i<similarityArr.length; i++){
+		var obj = similarityArr[i];
+		
+		for(var j=0; j<obj.length; j++){
+			drawCircle(treeInit.svg, 
+					x+xDif*j+xDif/2, y+height-yDif*i, 
+					2.5*obj[j], 'green', '');
+		}
+		x+=xDif/2;
+	}
+}
+
+function getSimilarityCircleData(){
+	var similarityArr = [];
+	var length = treePerson.length;
+	
+	for(var i=0; i<treePerson.length; i++){
+		var arr = [];
+		
+		for(var j=0; j<treePerson.length-i; j++){
+			var name = treeNameList[j+i];
+			var first = name.substring(0,1);
+			
+			if(first == 'M')
+				name = first.toLowerCase() + name.substring(1, name.length);
+			
+			var value = treePerson[j][name];
+			arr.push(value);
+		}
+		similarityArr.push(arr);
+	}
+	
+	return similarityArr;
+}
 
 // user define function
+// matrix
 function init(){
 	$('#resetButton').css({
 		left : $('#matrixArea').width()-$('#resetButton').width()-50
@@ -90,7 +248,7 @@ function init(){
 	
 	var matrixRoot = svg.append('rect').attr({
 		x : padding + 30,
-		y : 30,
+		y : 10,
 		width : graphW,
 		height : graphH,
 		fill : 'none',

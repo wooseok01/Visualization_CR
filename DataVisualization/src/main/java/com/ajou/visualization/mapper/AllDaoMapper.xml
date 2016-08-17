@@ -59,4 +59,17 @@
 	<select id="getDescription" resultType="Description">
 		select * from dataDescription;
 	</select>
+	
+	<select id="getSimilarityPerson" resultType="SimilarityPerson">
+		select * from similarityPerson;
+	</select>
+	
+	<select id="getSimilarityColumn" resultType="string">
+		select COLUMN_NAME  
+ 			from INFORMATION_SCHEMA.columns 
+ 			<where>
+ 				table_schema='DataVisualization' 
+ 				and table_name='similarityPerson';
+ 			</where>
+	</select>
 </mapper>

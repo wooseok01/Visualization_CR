@@ -10,7 +10,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<typeAlias alias="Consult" type="com.ajou.visualization.model.Consult"/>
 		<typeAlias alias="Consult2" type="com.ajou.visualization.model.Consult2"/>
 		<typeAlias alias="Description" type="com.ajou.visualization.model.Description"/>
-		
+		<typeAlias alias="SimilarityPerson" type="com.ajou.visualization.model.SimilarityPerson"/>
 			
 	</typeAliases>
 

@@ -22,6 +22,7 @@ import com.ajou.visualization.dao.AllDao;
 import com.ajou.visualization.model.Consult;
 import com.ajou.visualization.model.Consult2;
 import com.ajou.visualization.model.Description;
+import com.ajou.visualization.model.SimilarityPerson;
 
 import net.sf.json.JSONArray;
 
@@ -148,6 +149,22 @@ public class HomeController {
 		ArrayList<Description> descriptionList = credosData2.getDescription();
 		JSONArray jArray = JSONArray.fromObject(descriptionList);
 		
+		return jArray;
+	}
+	
+	@RequestMapping("/getSimilarityPerson")
+	public @ResponseBody JSONArray getSimilarityPerson(Model model, HttpServletRequest request){
+		
+		ArrayList<SimilarityPerson> similarityList = credosData2.getSimilarityPerson();
+		JSONArray jArray = JSONArray.fromObject(similarityList);
+		
+		return jArray;
+	}
+	
+	@RequestMapping("/getSimilarityColumn")
+	public @ResponseBody JSONArray getSimilarityColumn(Model model, HttpServletRequest request){
+		ArrayList<String> columnList = credosData2.getSimilarityColumn();
+		JSONArray jArray = JSONArray.fromObject(columnList);
 		return jArray;
 	}
 	

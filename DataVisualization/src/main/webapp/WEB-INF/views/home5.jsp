@@ -12,8 +12,8 @@
 <body>
   <input type="button" id="resetButton" class="btn btn-primary" value="reset" onclick="resetClick()">
 
-  <div id="tree">
-    <h1>Dementia-Matrix</h1>
+  <div id="treeArea">
+    
   </div>
   
   <div id="matrixArea">

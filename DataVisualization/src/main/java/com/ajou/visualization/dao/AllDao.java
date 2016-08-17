@@ -11,6 +11,7 @@ import com.ajou.visualization.mapper.AllDaoInterface;
 import com.ajou.visualization.model.Consult;
 import com.ajou.visualization.model.Consult2;
 import com.ajou.visualization.model.Description;
+import com.ajou.visualization.model.SimilarityPerson;
 
 public class AllDao {
 	private JdbcTemplate template;
@@ -61,6 +62,14 @@ public class AllDao {
 	public ArrayList<String> getPatientName2() {
 		// TODO Auto-generated method stub
 		return sqlSession.getMapper(AllDaoInterface.class).getPatientName2();
+	}
+
+	public ArrayList<SimilarityPerson> getSimilarityPerson() {
+		return sqlSession.getMapper(AllDaoInterface.class).getSimilarityPerson();
+	}
+
+	public ArrayList<String> getSimilarityColumn() {
+		return sqlSession.getMapper(AllDaoInterface.class).getSimilarityColumn();
 	}
 	
 	
