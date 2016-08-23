@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ajou.visualization.dao.AllDao;
 import com.ajou.visualization.model.Consult2;
+import com.ajou.visualization.model.Patient;
 
 public class GetCredosData3 {
 	private AllDao dao;
@@ -18,8 +19,8 @@ public class GetCredosData3 {
 	public void setDao(AllDao dao) {this.dao = dao;}
 	public AllDao getDao() {return dao;}
 	
-	public ArrayList<Consult2> getCredosData(){
-		ArrayList<Consult2> consultList = null;
+	public ArrayList<Patient> getCredosData(){
+		ArrayList<Patient> consultList = null;
 		consultList = dao.getCredosData3();
 		
 		return consultList;

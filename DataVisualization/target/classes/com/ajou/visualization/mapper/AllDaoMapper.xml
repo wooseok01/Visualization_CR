@@ -20,14 +20,9 @@
 		order by pGroup,name,inDate;
 	</select>
 
-	<select id="getCredosData3" resultType="Consult2">
-		select * from dataUnion
-		<where>
-			pGroup = 'maintain' or
-			pGroup = 'worse' or 
-			pGroup = 'worseBetter'		
-		</where>
-		order by pGroup, name, inDate;
+	<select id="getCredosData3" resultType="Patient">
+		select * from dataWhole
+		order by id, in_date_reg;
 	</select>
 	
 	<select id="getPatientName" resultType="string">
@@ -71,5 +66,19 @@
  				table_schema='DataVisualization' 
  				and table_name='similarityPerson';
  			</where>
+	</select>
+	
+	<select id="getCredosQuestions" resultType="string">
+		select COLUMN_NAME  
+ 			from INFORMATION_SCHEMA.columns 
+ 			<where>
+ 				table_schema='DataVisualization' 
+ 				and table_name='dataWhole';
+ 			</where>
+	</select>
+	
+	<select id="getPatientsNameList" resultType="string">
+		select id from dataWhole
+		group by id;
 	</select>
 </mapper>

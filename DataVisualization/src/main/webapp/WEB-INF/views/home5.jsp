@@ -10,10 +10,17 @@
   <link rel="stylesheet" href="resources/style/home2.css">
 </head>
 <body>
-  <input type="button" id="resetButton" class="btn btn-primary" value="reset" onclick="resetClick()">
 
   <div id="treeArea">
-    
+    <div id="buttonList">
+      <input type="radio" name="click" value="kmmseList" class="listChange" checked="checked"> kmmse<br>
+      <input type="radio" name="click" value="kdsqlList" class="listChange"> kdsqlList<br>
+      <input type="radio" name="click" value="siadlList" class="listChange"> siadlList<br>
+      <input type="radio" name="click" value="npiList" class="listChange"> npiList<br>
+      <input type="radio" name="click" value="cdrList" class="listChange"> cdrList<br>
+      <input type="radio" name="click" value="hisList" class="listChange"> hisList<br>
+      <input type="radio" name="click" value="ksfList" class="listChange"> ksfList<br>
+    </div>
   </div>
   
   <div id="matrixArea">

@@ -4,7 +4,7 @@ html,body{
     width : 100%;
     height : 100%;
     position : relative;
-    background-color: rgba(0,17,30,0.7);
+    background-color: white;
 }
 
 h1{
@@ -40,3 +40,10 @@ h1{
     width : 100%;
     height : 100%;
 }
+
+#buttonList{
+    width : 100px;
+    height : 150px;
+    position : absolute;
+}
+

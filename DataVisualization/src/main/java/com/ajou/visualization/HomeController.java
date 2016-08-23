@@ -22,6 +22,7 @@ import com.ajou.visualization.dao.AllDao;
 import com.ajou.visualization.model.Consult;
 import com.ajou.visualization.model.Consult2;
 import com.ajou.visualization.model.Description;
+import com.ajou.visualization.model.Patient;
 import com.ajou.visualization.model.SimilarityPerson;
 
 import net.sf.json.JSONArray;
@@ -99,13 +100,6 @@ public class HomeController {
 		return "home6";
 	}
 	
-	@RequestMapping("/getCredosData3")
-	public @ResponseBody JSONArray getCredosData3(Model model, HttpServletRequest request){
-		ArrayList<Consult2> consultList = credosData3.getCredosData();
-		JSONArray jArray = JSONArray.fromObject(consultList);
-		
-		return jArray; 
-	}
 	
 	
 	
@@ -132,7 +126,14 @@ public class HomeController {
 		JSONArray jArray = JSONArray.fromObject(consultList);
 		
 		return jArray;
+	}
+	
+	@RequestMapping("/getCredosData3")
+	public @ResponseBody JSONArray getCredosData3(Model model, HttpServletRequest request){
+		ArrayList<Patient> consultList = credosData3.getCredosData();
+		JSONArray jArray = JSONArray.fromObject(consultList);
 		
+		return jArray; 
 	}
 	
 	@RequestMapping("/getPatientName")
@@ -165,6 +166,20 @@ public class HomeController {
 	public @ResponseBody JSONArray getSimilarityColumn(Model model, HttpServletRequest request){
 		ArrayList<String> columnList = credosData2.getSimilarityColumn();
 		JSONArray jArray = JSONArray.fromObject(columnList);
+		return jArray;
+	}
+	
+	@RequestMapping("/getCredosQuestions")
+	public @ResponseBody JSONArray getCredosQuestions(Model model, HttpServletRequest request){
+		ArrayList<String> questionsList = credosData2.getCredosQuestions();
+		JSONArray jArray = JSONArray.fromObject(questionsList);
+		return jArray;
+	}
+	
+	@RequestMapping("/getPatientsNameList")
+	public @ResponseBody JSONArray getPatientsNameList(Model model, HttpServletRequest request){
+		ArrayList<String> nameList = credosData2.getSimilarityColumn();
+		JSONArray jArray = JSONArray.fromObject(nameList);
 		return jArray;
 	}
 	

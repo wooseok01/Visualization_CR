@@ -87,4 +87,8 @@ public class GetCredosData2 {
 	public ArrayList<String> getSimilarityColumn() {
 		return dao.getSimilarityColumn();
 	}
+
+	public ArrayList<String> getCredosQuestions() {
+		return dao.getCredosQuestions();
+	}
 }

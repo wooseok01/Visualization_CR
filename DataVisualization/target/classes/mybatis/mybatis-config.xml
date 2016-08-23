@@ -11,7 +11,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<typeAlias alias="Consult2" type="com.ajou.visualization.model.Consult2"/>
 		<typeAlias alias="Description" type="com.ajou.visualization.model.Description"/>
 		<typeAlias alias="SimilarityPerson" type="com.ajou.visualization.model.SimilarityPerson"/>
-			
+		<typeAlias alias="Patient" type="com.ajou.visualization.model.Patient"></typeAlias>
 	</typeAliases>
 
 	<!-- UserMap.xml 등록 -->

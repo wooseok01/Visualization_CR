@@ -11,6 +11,7 @@ import com.ajou.visualization.mapper.AllDaoInterface;
 import com.ajou.visualization.model.Consult;
 import com.ajou.visualization.model.Consult2;
 import com.ajou.visualization.model.Description;
+import com.ajou.visualization.model.Patient;
 import com.ajou.visualization.model.SimilarityPerson;
 
 public class AllDao {
@@ -55,7 +56,7 @@ public class AllDao {
 		return sqlSession.getMapper(AllDaoInterface.class).getDescription();
 	}
 
-	public ArrayList<Consult2> getCredosData3() {
+	public ArrayList<Patient> getCredosData3() {
 		return sqlSession.getMapper(AllDaoInterface.class).getCredosData3();
 	}
 
@@ -70,6 +71,10 @@ public class AllDao {
 
 	public ArrayList<String> getSimilarityColumn() {
 		return sqlSession.getMapper(AllDaoInterface.class).getSimilarityColumn();
+	}
+
+	public ArrayList<String> getCredosQuestions() {
+		return sqlSession.getMapper(AllDaoInterface.class).getCredosQuestions();
 	}
 	
 	
