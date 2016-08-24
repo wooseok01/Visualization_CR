@@ -10,15 +10,15 @@
   <link rel="stylesheet" href="resources/style/home2.css">
 </head>
 <body>
-
+  
   <div id="treeArea">
     <select id="buttonList">
-      <option>kmmseList</option>
-      <option>kdsqlList</option>
-      <option>siadlList</option>
-      <option>npiList</option>
-      <option>cdrList</option>
-      <option>ksfList</option>
+      <option value="kmmseList">K-MMSE</option>
+      <option value="kdsqlList">KDSQ</option>
+      <option value="siadlList">SIADL</option>
+      <option value="npiList">CGA-NPI</option>
+      <option value="cdrList">CDR</option>
+      <option value="ksfList">KSF-GDS</option>
     </select>
     <!-- <div id="buttonList">
       <input type="radio" name="click" value="kmmseList" class="listChange" checked="checked"> kmmse<br>

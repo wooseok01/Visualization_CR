@@ -792,7 +792,7 @@ $('#buttonList').change(function(){
 	$('#matrixArea > svg').fadeOut('slow',function(){
 		$('#matrixArea > svg').empty();
 		
-		questions = questionsList[thisObj.text()];
+		questions = questionsList[thisObj.val()];
 		
 		init.svg.append('rect').attr({
 			x : init.padding + 30,
