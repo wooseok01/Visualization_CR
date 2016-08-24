@@ -72,7 +72,7 @@ function drawPolygon(init, points, strokeColor){
 
 
 
-function drawGraph(root, lineData, className, stroke, width, tone){
+function drawGraph(root, lineData, className, stroke, width, tone, color){
 	var lineFunction;
 	if(tone == null){
 		lineFunction = d3.svg.line()
@@ -89,7 +89,7 @@ function drawGraph(root, lineData, className, stroke, width, tone){
 	var line = root.append('path').attr({
 		d : lineFunction(lineData),
 		stroke : stroke,
-		fill : 'none',
+		fill : color,
 		'stroke-width' : width,
 		class : className
 	});

@@ -12,15 +12,22 @@
 <body>
 
   <div id="treeArea">
-    <div id="buttonList">
+    <select id="buttonList">
+      <option>kmmseList</option>
+      <option>kdsqlList</option>
+      <option>siadlList</option>
+      <option>npiList</option>
+      <option>cdrList</option>
+      <option>ksfList</option>
+    </select>
+    <!-- <div id="buttonList">
       <input type="radio" name="click" value="kmmseList" class="listChange" checked="checked"> kmmse<br>
       <input type="radio" name="click" value="kdsqlList" class="listChange"> kdsqlList<br>
       <input type="radio" name="click" value="siadlList" class="listChange"> siadlList<br>
       <input type="radio" name="click" value="npiList" class="listChange"> npiList<br>
       <input type="radio" name="click" value="cdrList" class="listChange"> cdrList<br>
-      <input type="radio" name="click" value="hisList" class="listChange"> hisList<br>
       <input type="radio" name="click" value="ksfList" class="listChange"> ksfList<br>
-    </div>
+    </div> -->
   </div>
   
   <div id="matrixArea">
