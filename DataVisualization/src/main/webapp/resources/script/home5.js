@@ -210,6 +210,40 @@ function treeInit(){
 		id : 'treeSvg'
 	});
 	
+	drawRect(svg, 
+			padding-2.5, padding*2, 
+			5, 10, 'rgba(53,158,131,1)', 
+			'guideDescription', '');
+	drawRect(svg, 
+			padding-2.5, padding*3, 
+			5, 10, 'rgba(49,58,66,1)', 
+			'guideDescription', '');
+	
+	drawCircle(svg, 
+			padding, padding*4+2.5, 
+			5, 'rgba(53,158,131,1)', '');
+	
+	drawCircle(svg, 
+			padding, padding*5+2.5, 
+			2, 'rgba(53,158,131,1)', '');
+	
+	
+	drawText(svg, 
+			padding + 10, padding*2-1, 
+			10, 'white', 'guideDescription', 'Score').style({
+				'text-anchor' : 'start'
+			});
+	drawText(svg, 
+			padding+10, padding*3-1, 
+			10, 'white', 'guideDescription', 'No data');
+	drawText(svg, 
+			padding+10, padding*4-3, 
+			10, 'white', 'guideDescription', 'High similarity');
+	
+	drawText(svg, 
+			padding+10, padding*5-3, 
+			10, 'white', 'guideDescription', 'Low similarity');
+	
 	return {
 		svg : svg,
 		treeRoot : treeRoot,
