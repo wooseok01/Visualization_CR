@@ -303,12 +303,19 @@ function drawSimilarityCircle(){
 		for(var j=0; j<obj.length; j++){
 			var circle = drawCircle(treeInit.svg, 
 					x+xDif*j+xDif/2, y+height-yDif*i, 
-					2.5*(1-obj[j]), 'rgb(53,158,131)', nameList[i]+'And'+nameList[j] );
+					2.5*(1-obj[j]), 'rgb(53,158,131)', 
+					nameList[j]+'And'+nameList[j+i]+' similarityCircle');
 
 			if(i == 0){
 				circle.attr({
-					'id' : nameList[j]
+					'id' : nameList[j],
+					'class' : nameList[j]+'And'+nameList[j]+' similarityCircle'
 				});
+			}else{
+				drawCircle(treeInit.svg, 
+						x+xDif*j+xDif/2, y+height-yDif*i, 
+						3, 'none', 
+						nameList[j]+'And'+nameList[j+i]+' similarityCircle2');
 			}
 		}
 		x += xDif/2;
@@ -332,10 +339,10 @@ function divideCluster(similarityArr){
 	                  'NDcxMTE2LTIwNTI0MTQg', 'NDEwODEzLTI0NzE2MTEg'];
 	
 	var middleList = ['#MzIxMjI5LTIxNjkzMTUg', 
-	                  '.MzMxMTA3LTIwNjkwMTAgAndNDExMjE1LTE0NjY3Mjkg',
-	                  '.MzIwOTE4LTExNjMwMTMgAndNTAwMzIyLTI4MDc4Mjcg', 
-	                  '.MjkxMTIwLTIwMzY1MTQgAndNDkxMjE1LTIwNTYyMzgg',
-	                  '.MzcwMTA1LTI1NTE0MTMgAndNDcxMTE2LTIwNTI0MTQg'];
+	                  '.NDExMjE1LTE0NjY3MjkgAndMjgwNjA2LTIwNjM2MTAg',
+	                  '.NTAwMzIyLTI4MDc4MjcgAndNTQwODA4LTE5MzA0MTgg',
+	                  '.NDkxMjE1LTIwNTYyMzggAndNDMwMzIzLTEwNDI3MTEg',
+	                  '.NDcxMTE2LTIwNTI0MTQgAndNDEwODEzLTI0NzE2MTEg'];
 	
 	var cx; 
 	var cx2; 
@@ -354,14 +361,16 @@ function divideCluster(similarityArr){
 	                    'NDAxMDE1LTEyMzE3MTEg', 'NDEwODEzLTI0NzE2MTEg'];
 	//MzYwNTIxLTEwNDE5MTQg
 	//
-	var unSameMiddleList = ['.MjkxMTIwLTIwMzY1MTQgAndMzUwMTAxLTIwMDAzMTEg',
-	                        '.MzYwNTIxLTEwNDE5MTQgAndMjMwMzEyLTE4MjkyMTQg',
-	                        '.MzQwMjIxLTI3Nzc4MTEgAndNDExMjE1LTE0NjY3Mjkg',
-	                        '.MzExMTExLTIwMzc5MjEgAndMzUwMTAxLTIwMDAzMTEg',
-	                        '.MjkwMjI2LTEwNTg0MTcgAndMzYxMjAyLTIxMDg3MTkg',
-	                        '.MzAwNjIxLTEwMTc0MTMgAndNDAxMDE1LTEyMzE3MTEg',
-	                        '.MjkwOTI1LTI3MDE2MTggAndNDAxMDE1LTEyMzE3MTEg',
-	                        '.NDIxMjEyLTIwMjM1MTggAndNDAxMDE1LTEyMzE3MTEg'];
+	var unSameMiddleList = ['.MzUwMTAxLTIwMDAzMTEgAndMjkwNDA5LTEwMzc4Mjcg',
+	                        '.MjMwMzEyLTE4MjkyMTQgAndMzYwNTIxLTEwNDE5MTQg',
+	                        '.NDExMjE1LTE0NjY3MjkgAndMzYwNTIxLTEwNDE5MTQg',
+	                        '.MzUwMTAxLTIwMDAzMTEgAndNDEwODEzLTI0NzE2MTEg',
+	                        '.MzYxMjAyLTIxMDg3MTkgAndMjkwNDA5LTEwMzc4Mjcg',
+	                        '.NDAxMDE1LTEyMzE3MTEgAndNDkxMjE1LTIwNTYyMzgg',
+	                        '.NDAxMDE1LTEyMzE3MTEgAndMzYxMjAyLTIxMDg3MTkg',
+	                        '.NDAxMDE1LTEyMzE3MTEgAndNDEwODEzLTI0NzE2MTEg'
+//	                        '.NDIxMjEyLTIwMjM1MTggAndNDAxMDE1LTEyMzE3MTEg'
+	                        ];
 	
 	for(var i=0; i<unSameCircle.length/2; i++){
 		cx = $('#'+unSameCircle[i*2]).attr('cx')*1;
@@ -446,7 +455,128 @@ function divideCluster(similarityArr){
 				0.5, 'linear', 'rgba(175,195,106,0.7)');
 		lineData = [];
 	}
-	d3.selectAll('circle').moveToFront();
+	d3.selectAll('.similarityCircle').moveToFront();
+	d3.selectAll('.similarityCircle2').moveToFront();
+	d3.selectAll('.similarityCircle2')
+	.on('mouseover', function(){
+		var className = $(this).attr('class');
+		var split = className.split('And');
+		var first = split[0];
+		var second = (split[1].split(' '))[0];
+		
+		
+		$('#'+first).attr('fill','red');
+		$('#'+second).attr('fill','red');
+		$('#'+first+'NameGraph').find('.phase').attr('fill','red');
+		$('#'+second+'NameGraph').find('.phase').attr('fill','red');
+		
+		treeNodeHoverFunction(first, second, this, 'Hover','red');
+	}).on('mouseout', function(){
+		$('.Hover').remove();
+	});
+	d3.selectAll('.similarityCircle')
+	.on('mouseover', function(){
+		
+		var className = $(this).attr('class');
+		var split = className.split('And');
+		var first = split[0];
+		var second = (split[1].split(' '))[0];
+		
+		
+		$('#'+first).attr('fill','red');
+		$('#'+second).attr('fill','red');
+		$(this).attr('fill','red');
+		
+		$('#'+first+'NameGraph').find('.phase').attr('stroke','red');
+		$('#'+second+'NameGraph').find('.phase').attr('stroke','red');
+		
+		treeNodeHoverFunction(first, second, this, 'Hover','red');
+		
+	}).on('mouseout', function(){
+		var className = $(this).attr('class');
+		var split = className.split('And');
+		var first = split[0];
+		var second = (split[1].split(' '))[0];
+		
+		
+		$('#'+first).attr('fill','red');
+		$('#'+second).attr('fill','red');
+		$(this).attr('fill','red');
+		
+		$('#'+first+'NameGraph').find('.phase').attr('stroke','white');
+		$('#'+second+'NameGraph').find('.phase').attr('stroke','white');
+		
+		d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
+		
+		$('.Hover').remove();
+	}).on('click', function(){
+		var className = $(this).attr('class');
+		var split = className.split('And');
+		var first = split[0];
+		var second = (split[1].split(' '))[0];
+		
+//		treeNodeHoverFunction(first, second, this, 'click','blue');
+	});
+}
+
+function treeNodeHoverFunction(first, second, zero, className, color){
+
+	var firstObj = {x : $('#'+first).attr('cx')*1,y : $('#'+first).attr('cy')*1};
+	var secondObj = {x : $('#'+second).attr('cx')*1,y : $('#'+second).attr('cy')*1};
+	var thisObj = {x : $(zero).attr('cx')*1, y : $(zero).attr('cy')*1};
+	
+	var yVal1, yVal12, yVal2, yVal22;
+	var xVal1, xVal2;
+	var plusCrossDot, minusCrossDot;
+	
+	yVal1 = firstObj.y - firstObj.x*plusAxis;
+	yVal12 = firstObj.y - firstObj.x*minusAxis;
+	
+	yVal2 = secondObj.y - secondObj.x*minusAxis;
+	yVal22 = secondObj.y - secondObj.x*plusAxis;
+	
+	plusCrossDot = {
+			x : (yVal1 - minusYxis)/(minusAxis - plusAxis),
+			y : minusAxis*((yVal1 - minusYxis)/(minusAxis - plusAxis))+minusYxis
+	};
+	
+	minusCrossDot = {
+			x : (yVal2 - plusYxis)/(plusAxis - minusAxis),
+			y : plusAxis*((yVal2 - plusYxis)/(plusAxis - minusAxis)) + plusYxis
+	};
+	
+	drawLine(treeInit.svg, 
+			firstObj.x, firstObj.y, 
+			plusCrossDot.x, plusCrossDot.y, 
+			0.5, color, className);
+	drawLine(treeInit.svg, 
+			secondObj.x, secondObj.y, 
+			minusCrossDot.x, minusCrossDot.y, 
+			0.5, color, className);
+	
+	
+	if(first != second){
+		
+		plusCrossDot = {
+				x : (plusYxis - yVal12)/(minusAxis - plusAxis),
+				y : minusAxis*(((plusYxis - yVal12)/(minusAxis - plusAxis)))+yVal12
+		};
+		
+		minusCrossDot = {
+				x : (minusYxis - yVal22)/(plusAxis - minusAxis),
+				y : plusAxis*((minusYxis - yVal22)/(plusAxis - minusAxis)) + yVal22
+		};
+		
+		drawLine(treeInit.svg, 
+				firstObj.x, firstObj.y, 
+				plusCrossDot.x, plusCrossDot.y, 
+				0.5, color, className);
+		drawLine(treeInit.svg, 
+				secondObj.x, secondObj.y, 
+				minusCrossDot.x, minusCrossDot.y, 
+				0.5, color, className);
+	}
+	
 }
 
 function getSimilarityCircleData(){
@@ -540,10 +670,6 @@ function drawPhaseGuideLine(init){
 	var phaseColor = ['white','white','white'];
 	
 	for(var i=0; i<3; i++){
-//		var line = drawLine(init.svg,
-//				x, y+phaseDif.yDif*i, 
-//				x+width-3.5, y+phaseDif.yDif*i, 
-//				0.5, 'rgba(255,255,255,0.3)', 'phaseGraphGuideLine '+phaseList[i]);
 		drawLine(init.svg, 
 				x, y+phaseDif.yDif*i, 
 				x+rectWidth, y+phaseDif.yDif*i, 
@@ -574,7 +700,6 @@ function drawPhaseLine(init){
 				
 			}
 		}
-//		console.log(array);
 		drawPersonGraph(changeIntegerValue(array), i);
 	}
 }
@@ -582,7 +707,7 @@ function drawPhaseLine(init){
 function drawPersonGraph(array, index){
 	var x = init.phaseGraphRoot.attr('x')*1;
 	var quarters = rectWidth/5;
-	var gTag = init.svg.append('g').attr('id',personList[index].id);
+	var gTag = init.svg.append('g').attr('id',personList[index].first.id+'NameGraph');
 	var line;
 	var rect = $('#'+personList[index].id).attr('x')*1;
 	var topLine = $('.SMI').attr('y1')*1;
@@ -690,6 +815,51 @@ function makePatientRect(init, dif){
 					x+dif.xDif*i, y+dif.yDif*j, 
 					dif.xDif - 3.5, dif.yDif - 1.8, 'rgba(215,235,146,1)', 
 					personList[i].first.id+' rectangle '+questions[j], '');
+			
+			rect.on('mouseover', function(){
+				var objId = $(this).parent().attr('id');
+				var id = objId.split(' ')[0];
+				
+				var className = $('#'+id).attr('class');
+				var split = className.split('And');
+				var first = split[0];
+				var second = (split[1].split(' '))[0];
+				
+				
+				$('#'+id).attr('fill','red');
+				treeNodeHoverFunction(first, second, $('#'+id), 'Hover', 'red');
+				$('#'+id+'NameGraph').find('.phase').attr('stroke','red');
+
+				drawRect(init.svg, 
+						$(this).parent().find('.rectangle').attr('x'), 
+						$(this).parent().find('.rectangle').attr('y'), 
+						rectWidth, dif.yDif*questions.length, 
+						'none', 'rectHoverVerticalGuide', '').attr('stroke','red');
+				
+				var thisClass = $(this).attr('class');
+				var qName = thisClass.split(' ')[2];
+				$('text.'+qName).attr('fill','red');
+				
+				drawRect(init.svg, 
+						init.matrixRoot.attr('x')*1, $(this).attr('y')*1, 
+						dif.xDif*personList.length-3.5, dif.yDif, 
+						'none', 'rectHoverParallelGuide', '').attr('stroke','red');
+
+			}).on('mouseout', function(){
+				d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
+				
+				var objId = $(this).parent().attr('id');
+				var id = objId.split(' ')[0];
+				
+				$('#'+id+'NameGraph').find('.phase').attr('stroke','rgba(255,255,255,0.85)');
+				var thisClass = $(this).attr('class');
+				var qName = thisClass.split(' ')[2];
+				$('text.'+qName).attr('fill','white');
+				
+				$('.Hover').remove();
+				$('.rectHoverVerticalGuide').remove();
+				$('.rectHoverParallelGuide').remove();
+			});
 		}
 		drawPatientRectGuideLine(gTag, init, i, rect);
 	}
@@ -784,24 +954,79 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 					var value = person[orderList[j]][questions[i]];
 					
 					value = changeValueToYPos(questions[i], value, height)
-					
-					drawRect(gTag, 
-							x + width/5*j, y+(height - value), 
-							width/5, value, 
-							'rgba(53,158,131,1)', 'smallRect', '');
+					var rect;
+					if(value != 0){
+						rect = drawRect(gTag, 
+								x + width/5*j, y+(height - value), 
+								width/5, value, 
+								'rgba(53,158,131,1)', 'smallRect order'+i, '');						
+					}else{
+						rect = drawRect(gTag, 
+								x + width/5*j, y+(height - value), 
+								width/5, value, 
+								'rgba(215,235,146,1)', 'smallRect order'+i, '');
+					}
 				}else if(person[orderList[j]][questions[i]] != 9 || 
 						person[orderList[j]][questions[i]] != 'NA'){
-					drawRect(gTag, 
+					rect = drawRect(gTag, 
 							x+width/5*j, y, 
 							width/5, height, 
-							'rgba(49,58,66,1)', 'smallRect', '');
+							'rgba(49,58,66,1)', 'smallRect order'+i, '');
 				}
 			}else{
-				drawRect(gTag, 
+				rect = drawRect(gTag, 
 						x+width/5*j, y, 
 						width/5, height, 
-						'rgba(49,58,66,1)', 'smallRect', '');
+						'rgba(49,58,66,1)', 'smallRect order'+i, '');
 			}
+			rect.on('mouseover', function(){
+				var objId = $(this).parent().attr('id');
+				var id = objId.split(' ')[0];
+				
+				var className = $('#'+id).attr('class');
+				var split = className.split('And');
+				var first = split[0];
+				var second = (split[1].split(' '))[0];
+				
+				
+				$('#'+id).attr('fill','red');
+				treeNodeHoverFunction(first, second, $('#'+id), 'Hover', 'red');
+				$('#'+id+'NameGraph').find('.phase').attr('stroke','red');
+				
+				drawRect(init.svg, 
+						$(this).parent().find('.rectangle').attr('x'), 
+						$(this).parent().find('.rectangle').attr('y'), 
+						rectWidth, dif.yDif*questions.length, 
+						'none', 'rectHoverVerticalGuide', '').attr('stroke','red');
+				
+				//가로 가이드라인!
+				var thisClass = $(this).attr('class');
+				var thisOrder = thisClass.split(' ')[1];
+				thisOrder = thisOrder.substring('order'.length, thisOrder.length)*1;
+				$('#parallelGuideLine'+thisOrder).find('text').attr('fill','red');
+				
+				drawRect(init.svg, 
+						init.matrixRoot.attr('x')*1, $(this).attr('y')*1, 
+						dif.xDif*personList.length-3.5, dif.yDif, 
+						'none', 'rectHoverParallelGuide', '').attr('stroke','red');
+				//here
+
+			}).on('mouseout', function(){
+				d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
+				var objId = $(this).parent().attr('id');
+				var id = objId.split(' ')[0];
+				
+				$('#'+id+'NameGraph').find('.phase').attr('stroke','rgba(255,255,255,0.85)');
+				
+				var thisClass = $(this).attr('class');
+				var thisOrder = thisClass.split(' ')[1];
+				thisOrder = thisOrder.substring('order'.length, thisOrder.length)*1;
+				$('#parallelGuideLine'+thisOrder).find('text').attr('fill','white');
+				
+				$('.rectHoverVerticalGuide').remove();
+				$('.rectHoverParallelGuide').remove();
+				$('.Hover').remove();
+			});
 		}
 	}
 }
@@ -816,8 +1041,10 @@ function changeValueToYPos(question, value, height){
 	else if(question.search('g_cdr') != -1){range = 3;}
 	else if(question.search('rf_his') != -1){range = 3;}
 	else if(question.search('b_ksf_gds') != -1){range = 3;}
-
+	
 	return height/range*value;
+	
+	
 }
 
 $('#buttonList').change(function(){
