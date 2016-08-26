@@ -293,6 +293,7 @@ function drawSimilarityCircle(){
 	var arr = [];
 
 	var similarityArr = getSimilarityCircleData();
+
 	var yDif = height/similarityArr.length;
 	var firstXDif = width/similarityArr.length/2;
 	var xDif = width/similarityArr.length;
@@ -415,7 +416,6 @@ function divideCluster(similarityArr){
 						0.5, 'linear', 'rgba(215,235,146,0.7)');				
 			}
 		}
-		
 		lineData = [];
 	}
 	
@@ -464,13 +464,12 @@ function divideCluster(similarityArr){
 		var first = split[0];
 		var second = (split[1].split(' '))[0];
 		
+		$('#'+first).attr('fill','orange');
+		$('#'+second).attr('fill','orange');
+		$('#'+first+'NameGraph').find('.phase').attr('fill','orange');
+		$('#'+second+'NameGraph').find('.phase').attr('fill','orange');
 		
-		$('#'+first).attr('fill','red');
-		$('#'+second).attr('fill','red');
-		$('#'+first+'NameGraph').find('.phase').attr('fill','red');
-		$('#'+second+'NameGraph').find('.phase').attr('fill','red');
-		
-		treeNodeHoverFunction(first, second, this, 'Hover','red');
+		treeNodeHoverFunction(first, second, this, 'Hover','orange');
 	}).on('mouseout', function(){
 		$('.Hover').remove();
 	});
@@ -482,15 +481,17 @@ function divideCluster(similarityArr){
 		var first = split[0];
 		var second = (split[1].split(' '))[0];
 		
+//		var thisCr = $(this).attr('r');
+//		$(this).attr('r',thisCr*1.5);
 		
-		$('#'+first).attr('fill','red');
-		$('#'+second).attr('fill','red');
-		$(this).attr('fill','red');
+		$('#'+first).attr('fill','orange');
+		$('#'+second).attr('fill','orange');
+		$(this).attr('fill','orange');
 		
-		$('#'+first+'NameGraph').find('.phase').attr('stroke','red');
-		$('#'+second+'NameGraph').find('.phase').attr('stroke','red');
+		$('#'+first+'NameGraph').find('.phase').attr('stroke','orange');
+		$('#'+second+'NameGraph').find('.phase').attr('stroke','orange');
 		
-		treeNodeHoverFunction(first, second, this, 'Hover','red');
+		treeNodeHoverFunction(first, second, this, 'Hover','orange');
 		
 	}).on('mouseout', function(){
 		var className = $(this).attr('class');
@@ -498,10 +499,12 @@ function divideCluster(similarityArr){
 		var first = split[0];
 		var second = (split[1].split(' '))[0];
 		
+//		var thisCr = $(this).attr('r');
+//		$(this).attr('r',thisCr/1.5);
 		
-		$('#'+first).attr('fill','red');
-		$('#'+second).attr('fill','red');
-		$(this).attr('fill','red');
+//		$('#'+first).attr('fill','orange');
+//		$('#'+second).attr('fill','orange');
+//		$(this).attr('fill','orange');
 		
 		$('#'+first+'NameGraph').find('.phase').attr('stroke','white');
 		$('#'+second+'NameGraph').find('.phase').attr('stroke','white');
@@ -825,25 +828,25 @@ function makePatientRect(init, dif){
 				var first = split[0];
 				var second = (split[1].split(' '))[0];
 				
-				
-				$('#'+id).attr('fill','red');
-				treeNodeHoverFunction(first, second, $('#'+id), 'Hover', 'red');
-				$('#'+id+'NameGraph').find('.phase').attr('stroke','red');
+				//
+				$('#'+id).attr('fill','orange');
+				treeNodeHoverFunction(first, second, $('#'+id), 'Hover', 'orange');
+				$('#'+id+'NameGraph').find('.phase').attr('stroke','orange');
 
 				drawRect(init.svg, 
 						$(this).parent().find('.rectangle').attr('x'), 
 						$(this).parent().find('.rectangle').attr('y'), 
 						rectWidth, dif.yDif*questions.length, 
-						'none', 'rectHoverVerticalGuide', '').attr('stroke','red');
+						'none', 'rectHoverVerticalGuide', '').attr('stroke','orange');
 				
 				var thisClass = $(this).attr('class');
 				var qName = thisClass.split(' ')[2];
-				$('text.'+qName).attr('fill','red');
+				$('text.'+qName).attr('fill','orange');
 				
 				drawRect(init.svg, 
 						init.matrixRoot.attr('x')*1, $(this).attr('y')*1, 
 						dif.xDif*personList.length-3.5, dif.yDif, 
-						'none', 'rectHoverParallelGuide', '').attr('stroke','red');
+						'none', 'rectHoverParallelGuide', '').attr('stroke','orange');
 
 			}).on('mouseout', function(){
 				d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
@@ -989,26 +992,26 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 				var second = (split[1].split(' '))[0];
 				
 				
-				$('#'+id).attr('fill','red');
-				treeNodeHoverFunction(first, second, $('#'+id), 'Hover', 'red');
-				$('#'+id+'NameGraph').find('.phase').attr('stroke','red');
+				$('#'+id).attr('fill','orange');
+				treeNodeHoverFunction(first, second, $('#'+id), 'Hover', 'orange');
+				$('#'+id+'NameGraph').find('.phase').attr('stroke','orange');
 				
 				drawRect(init.svg, 
 						$(this).parent().find('.rectangle').attr('x'), 
 						$(this).parent().find('.rectangle').attr('y'), 
 						rectWidth, dif.yDif*questions.length, 
-						'none', 'rectHoverVerticalGuide', '').attr('stroke','red');
+						'none', 'rectHoverVerticalGuide', '').attr('stroke','orange');
 				
 				//가로 가이드라인!
 				var thisClass = $(this).attr('class');
 				var thisOrder = thisClass.split(' ')[1];
 				thisOrder = thisOrder.substring('order'.length, thisOrder.length)*1;
-				$('#parallelGuideLine'+thisOrder).find('text').attr('fill','red');
+				$('#parallelGuideLine'+thisOrder).find('text').attr('fill','orange');
 				
 				drawRect(init.svg, 
 						init.matrixRoot.attr('x')*1, $(this).attr('y')*1, 
 						dif.xDif*personList.length-3.5, dif.yDif, 
-						'none', 'rectHoverParallelGuide', '').attr('stroke','red');
+						'none', 'rectHoverParallelGuide', '').attr('stroke','orange');
 				//here
 
 			}).on('mouseout', function(){
