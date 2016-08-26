@@ -551,11 +551,11 @@ function treeNodeHoverFunction(first, second, zero, className, color){
 	drawLine(treeInit.svg, 
 			firstObj.x, firstObj.y, 
 			plusCrossDot.x, plusCrossDot.y, 
-			0.5, color, className);
+			0.8, color, className);
 	drawLine(treeInit.svg, 
 			secondObj.x, secondObj.y, 
 			minusCrossDot.x, minusCrossDot.y, 
-			0.5, color, className);
+			0.8, color, className);
 	
 	
 	if(first != second){
@@ -573,11 +573,11 @@ function treeNodeHoverFunction(first, second, zero, className, color){
 		drawLine(treeInit.svg, 
 				firstObj.x, firstObj.y, 
 				plusCrossDot.x, plusCrossDot.y, 
-				0.5, color, className);
+				0.8, color, className);
 		drawLine(treeInit.svg, 
 				secondObj.x, secondObj.y, 
 				minusCrossDot.x, minusCrossDot.y, 
-				0.5, color, className);
+				0.8, color, className);
 	}
 	
 }
