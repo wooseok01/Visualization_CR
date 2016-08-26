@@ -305,18 +305,18 @@ function drawSimilarityCircle(){
 			var circle = drawCircle(treeInit.svg, 
 					x+xDif*j+xDif/2, y+height-yDif*i, 
 					2.5*(1-obj[j]), 'rgb(53,158,131)', 
-					nameList[j]+'And'+nameList[j+i]+' similarityCircle');
+					nameList[j]+'And'+nameList[j+i]+' similarityCircle real');
 
 			if(i == 0){
 				circle.attr({
 					'id' : nameList[j],
-					'class' : nameList[j]+'And'+nameList[j]+' similarityCircle'
+					'class' : nameList[j]+'And'+nameList[j]+' similarityCircle real'
 				});
 			}else{
 				drawCircle(treeInit.svg, 
 						x+xDif*j+xDif/2, y+height-yDif*i, 
-						3, 'none', 
-						nameList[j]+'And'+nameList[j+i]+' similarityCircle2');
+						3, 'rgba(53,158,131,0)', 
+						nameList[j]+'And'+nameList[j+i]+' similarityCircle');
 			}
 		}
 		x += xDif/2;
@@ -457,22 +457,22 @@ function divideCluster(similarityArr){
 	}
 	d3.selectAll('.similarityCircle').moveToFront();
 	d3.selectAll('.similarityCircle2').moveToFront();
-	d3.selectAll('.similarityCircle2')
-	.on('mouseover', function(){
-		var className = $(this).attr('class');
-		var split = className.split('And');
-		var first = split[0];
-		var second = (split[1].split(' '))[0];
-		
-		$('#'+first).attr('fill','orange');
-		$('#'+second).attr('fill','orange');
-		$('#'+first+'NameGraph').find('.phase').attr('fill','orange');
-		$('#'+second+'NameGraph').find('.phase').attr('fill','orange');
-		
-		treeNodeHoverFunction(first, second, this, 'Hover','orange');
-	}).on('mouseout', function(){
-		$('.Hover').remove();
-	});
+//	d3.selectAll('.similarityCircle2')
+//	.on('mouseover', function(){
+//		var className = $(this).attr('class');
+//		var split = className.split('And');
+//		var first = split[0];
+//		var second = (split[1].split(' '))[0];
+//		
+//		$('#'+first).attr('fill','orange');
+//		$('#'+second).attr('fill','orange');
+//		$('#'+first+'NameGraph').find('.phase').attr('fill','orange');
+//		$('#'+second+'NameGraph').find('.phase').attr('fill','orange');
+//		
+//		treeNodeHoverFunction(first, second, this, 'Hover','orange');
+//	}).on('mouseout', function(){
+//		$('.Hover').remove();
+//	});
 	d3.selectAll('.similarityCircle')
 	.on('mouseover', function(){
 		
@@ -486,7 +486,7 @@ function divideCluster(similarityArr){
 		
 		$('#'+first).attr('fill','orange');
 		$('#'+second).attr('fill','orange');
-		$(this).attr('fill','orange');
+		$('.'+first+'And'+second+' real').attr('fill','orange');
 		
 		$('#'+first+'NameGraph').find('.phase').attr('stroke','orange');
 		$('#'+second+'NameGraph').find('.phase').attr('stroke','orange');
@@ -509,7 +509,8 @@ function divideCluster(similarityArr){
 		$('#'+first+'NameGraph').find('.phase').attr('stroke','white');
 		$('#'+second+'NameGraph').find('.phase').attr('stroke','white');
 		
-		d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
+		d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
+		d3.selectAll('.real').attr('fill','rgb(53,158,131)');
 		
 		$('.Hover').remove();
 	}).on('click', function(){
