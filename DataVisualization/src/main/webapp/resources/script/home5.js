@@ -487,7 +487,8 @@ function divideCluster(similarityArr){
 		$('#'+first).attr('fill','orange');
 		$('#'+second).attr('fill','orange');
 		$('.'+first+'And'+second+' real').attr('fill','orange');
-		
+//		d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
+//		d3.selectAll('.real').attr('fill','rgb(53,158,131)');
 		$('#'+first+'NameGraph').find('.phase').attr('stroke','orange');
 		$('#'+second+'NameGraph').find('.phase').attr('stroke','orange');
 		
@@ -850,8 +851,9 @@ function makePatientRect(init, dif){
 						'none', 'rectHoverParallelGuide', '').attr('stroke','orange');
 
 			}).on('mouseout', function(){
-				d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
-				
+//				d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
+				d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
+				d3.selectAll('.real').attr('fill','rgb(53,158,131)');
 				var objId = $(this).parent().attr('id');
 				var id = objId.split(' ')[0];
 				
@@ -1016,7 +1018,9 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 				//here
 
 			}).on('mouseout', function(){
-				d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
+//				d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
+				d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
+				d3.selectAll('.real').attr('fill','rgb(53,158,131)');
 				var objId = $(this).parent().attr('id');
 				var id = objId.split(' ')[0];
 				
