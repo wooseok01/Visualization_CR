@@ -457,7 +457,6 @@ function divideCluster(similarityArr){
 		lineData = [];
 	}
 	d3.selectAll('.real').moveToFront();
-//	d3.selectAll('.similarityCircle2').moveToFront();
 	d3.selectAll('.similarityCircle')
 	.on('mouseover', function(){
 		
@@ -473,9 +472,10 @@ function divideCluster(similarityArr){
 		$('#'+first+'NameGraph').find('.phase').attr('stroke','orange');
 		$('#'+second+'NameGraph').find('.phase').attr('stroke','orange');
 		
-		treeNodeHoverFunction(first, second, this, 'Hover','orange');
+		treeNodeHoverFunction(first, second, this, 'Hover','rgba(255,165,0,0.2)');
 		split = split[1].split(' ');
 		guideCircleColorChange(split[split.length-1]);
+		
 		if(first != second){
 			var firstClass = $('#'+first).attr('class');
 			var secondClass = $('#'+second).attr('class');
@@ -484,6 +484,7 @@ function divideCluster(similarityArr){
 			split = secondClass.split(' ');
 			guideCircleColorChange(split[split.length-1]);
 		}
+
 	}).on('mouseout', function(){
 		var className = $(this).attr('class');
 		var split = className.split('And');
@@ -868,7 +869,7 @@ function makePatientRect(init, dif){
 				
 				//
 				$('#'+id).attr('fill','orange');
-				treeNodeHoverFunction(first, second, $('#'+id), 'Hover', 'orange');
+				treeNodeHoverFunction(first, second, $('#'+id), 'Hover', 'rgba(255,165,0,0.2)');
 				$('#'+id+'NameGraph').find('.phase').attr('stroke','orange');
 
 				drawRect(init.svg, 
@@ -1043,7 +1044,7 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 				
 				
 				$('#'+id).attr('fill','orange');
-				treeNodeHoverFunction(first, second, $('#'+id), 'Hover', 'orange');
+				treeNodeHoverFunction(first, second, $('#'+id), 'Hover', 'rgba(255,165,0,0.2)');
 				$('#'+id+'NameGraph').find('.phase').attr('stroke','orange');
 				
 				drawRect(init.svg, 
