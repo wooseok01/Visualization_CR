@@ -18,6 +18,7 @@ var rectWidth;
 //tree와 matrix연동 전에 임시 개발을 위한 변수
 var treePerson = [];
 var treeNameList = [];
+var similarityArr = [];
 
 d3.selection.prototype.moveToFront = function() {  
 	return this.each(function(){
@@ -292,7 +293,7 @@ function drawSimilarityCircle(){
 	var height = treeInit.treeRoot.attr('height')*1;
 	var arr = [];
 
-	var similarityArr = getSimilarityCircleData();
+	similarityArr = getSimilarityCircleData();
 
 	var yDif = height/similarityArr.length;
 	var firstXDif = width/similarityArr.length/2;
@@ -305,18 +306,18 @@ function drawSimilarityCircle(){
 			var circle = drawCircle(treeInit.svg, 
 					x+xDif*j+xDif/2, y+height-yDif*i, 
 					2.5*(1-obj[j]), 'rgb(53,158,131)', 
-					nameList[j]+'And'+nameList[j+i]+' similarityCircle real');
+					nameList[j]+'And'+nameList[j+i]+' similarityCircle real circleOrder'+i+'-'+j);
 
 			if(i == 0){
 				circle.attr({
 					'id' : nameList[j],
-					'class' : nameList[j]+'And'+nameList[j]+' similarityCircle real'
+					'class' : nameList[j]+'And'+nameList[j]+' similarityCircle real circleOrder'+i+'-'+j
 				});
 			}else{
 				drawCircle(treeInit.svg, 
 						x+xDif*j+xDif/2, y+height-yDif*i, 
 						3, 'rgba(53,158,131,0)', 
-						nameList[j]+'And'+nameList[j+i]+' similarityCircle');
+						nameList[j]+'And'+nameList[j+i]+' similarityCircle circleOrder'+i+'-'+j);
 			}
 		}
 		x += xDif/2;
@@ -455,24 +456,8 @@ function divideCluster(similarityArr){
 				0.5, 'linear', 'rgba(175,195,106,0.7)');
 		lineData = [];
 	}
-	d3.selectAll('.similarityCircle').moveToFront();
-	d3.selectAll('.similarityCircle2').moveToFront();
-//	d3.selectAll('.similarityCircle2')
-//	.on('mouseover', function(){
-//		var className = $(this).attr('class');
-//		var split = className.split('And');
-//		var first = split[0];
-//		var second = (split[1].split(' '))[0];
-//		
-//		$('#'+first).attr('fill','orange');
-//		$('#'+second).attr('fill','orange');
-//		$('#'+first+'NameGraph').find('.phase').attr('fill','orange');
-//		$('#'+second+'NameGraph').find('.phase').attr('fill','orange');
-//		
-//		treeNodeHoverFunction(first, second, this, 'Hover','orange');
-//	}).on('mouseout', function(){
-//		$('.Hover').remove();
-//	});
+	d3.selectAll('.real').moveToFront();
+//	d3.selectAll('.similarityCircle2').moveToFront();
 	d3.selectAll('.similarityCircle')
 	.on('mouseover', function(){
 		
@@ -481,31 +466,29 @@ function divideCluster(similarityArr){
 		var first = split[0];
 		var second = (split[1].split(' '))[0];
 		
-//		var thisCr = $(this).attr('r');
-//		$(this).attr('r',thisCr*1.5);
-		
 		$('#'+first).attr('fill','orange');
 		$('#'+second).attr('fill','orange');
-		$('.'+first+'And'+second+' real').attr('fill','orange');
-//		d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
-//		d3.selectAll('.real').attr('fill','rgb(53,158,131)');
+		$('.'+first+'And'+second+'.similarityCircle.real').attr('fill','orange');
+		
 		$('#'+first+'NameGraph').find('.phase').attr('stroke','orange');
 		$('#'+second+'NameGraph').find('.phase').attr('stroke','orange');
 		
 		treeNodeHoverFunction(first, second, this, 'Hover','orange');
-		
+		split = split[1].split(' ');
+		guideCircleColorChange(split[split.length-1]);
+		if(first != second){
+			var firstClass = $('#'+first).attr('class');
+			var secondClass = $('#'+second).attr('class');
+			split = firstClass.split(' ');
+			guideCircleColorChange(split[split.length-1]);
+			split = secondClass.split(' ');
+			guideCircleColorChange(split[split.length-1]);
+		}
 	}).on('mouseout', function(){
 		var className = $(this).attr('class');
 		var split = className.split('And');
 		var first = split[0];
 		var second = (split[1].split(' '))[0];
-		
-//		var thisCr = $(this).attr('r');
-//		$(this).attr('r',thisCr/1.5);
-		
-//		$('#'+first).attr('fill','orange');
-//		$('#'+second).attr('fill','orange');
-//		$(this).attr('fill','orange');
 		
 		$('#'+first+'NameGraph').find('.phase').attr('stroke','white');
 		$('#'+second+'NameGraph').find('.phase').attr('stroke','white');
@@ -520,8 +503,61 @@ function divideCluster(similarityArr){
 		var first = split[0];
 		var second = (split[1].split(' '))[0];
 		
-//		treeNodeHoverFunction(first, second, this, 'click','blue');
 	});
+}
+
+function guideCircleColorChange(circleOrder){
+	var order = circleOrder.substring('circleOrder'.length, circleOrder.length);
+	var firstOrder = order.split('-')[0]*1;
+	var secondOrder = order.split('-')[1]*1;
+	var tempFirst = firstOrder;
+	var tempSecond = secondOrder;
+	//left upside node color change logic
+	while(true){
+		tempFirst++;
+		tempSecond--;
+
+		if(tempFirst>64 || tempSecond<0) break;
+		
+		$('.real'+'.circleOrder'+tempFirst+'-'+tempSecond).attr('fill','orange');
+	}
+	
+	tempFirst = firstOrder;
+	tempSecond = secondOrder;
+	
+	//right downside node color change logic
+	while(true){
+		tempFirst--;
+		tempSecond++;
+
+		if(tempFirst<0 || tempSecond>63) break;
+		
+		$('.real'+'.circleOrder'+tempFirst+'-'+tempSecond).attr('fill','orange');
+	}
+	
+	tempFirst = firstOrder;
+	tempSecond = secondOrder;
+	//right upside node color change logic
+	while(true){
+		tempFirst++;
+//		tempSecond++;
+
+		if(similarityArr[tempFirst].length < tempSecond)break;
+
+		$('.real'+'.circleOrder'+tempFirst+'-'+tempSecond).attr('fill','orange');
+	}
+	
+	tempFirst = firstOrder;
+	tempSecond = secondOrder;
+	//left downside node color change logic
+	while(true){
+		tempFirst--;
+		
+		if(tempFirst<0) break;
+		
+		$('.real'+'.circleOrder'+tempFirst+'-'+tempSecond).attr('fill','orange');
+	}
+	
 }
 
 function treeNodeHoverFunction(first, second, zero, className, color){
@@ -849,6 +885,17 @@ function makePatientRect(init, dif){
 						init.matrixRoot.attr('x')*1, $(this).attr('y')*1, 
 						dif.xDif*personList.length-3.5, dif.yDif, 
 						'none', 'rectHoverParallelGuide', '').attr('stroke','orange');
+				
+				split = split[1].split(' ');
+				guideCircleColorChange(split[split.length-1]);
+				if(first != second){
+					var firstClass = $('#'+first).attr('class');
+					var secondClass = $('#'+second).attr('class');
+					split = firstClass.split(' ');
+					guideCircleColorChange(split[split.length-1]);
+					split = secondClass.split(' ');
+					guideCircleColorChange(split[split.length-1]);
+				}
 
 			}).on('mouseout', function(){
 //				d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
@@ -1016,9 +1063,19 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 						dif.xDif*personList.length-3.5, dif.yDif, 
 						'none', 'rectHoverParallelGuide', '').attr('stroke','orange');
 				//here
+				
+				split = split[1].split(' ');
+				guideCircleColorChange(split[split.length-1]);
+				if(first != second){
+					var firstClass = $('#'+first).attr('class');
+					var secondClass = $('#'+second).attr('class');
+					split = firstClass.split(' ');
+					guideCircleColorChange(split[split.length-1]);
+					split = secondClass.split(' ');
+					guideCircleColorChange(split[split.length-1]);
+				}
 
 			}).on('mouseout', function(){
-//				d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
 				d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
 				d3.selectAll('.real').attr('fill','rgb(53,158,131)');
 				var objId = $(this).parent().attr('id');
