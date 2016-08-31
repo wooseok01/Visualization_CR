@@ -112,7 +112,7 @@ async.waterfall([
     	});
     },function(data, cb){
     	if(selected == null){
-    		selected = 'kmmseList';
+    		selected = 'kdsqlList';
     		questions = questionsList[selected];
     	}
     	//make personList & nameList
@@ -318,7 +318,7 @@ function drawSimilarityCircle(){
 		for(var j=0; j<obj.length; j++){
 			var circle = drawCircle(treeInit.svg, 
 					x+xDif*j+xDif/2, y+height-yDif*i, 
-					2.5*(1-obj[j]), 'rgb(53,158,131)', 
+					treeDif.xDif/8*(1-obj[j]), 'rgb(53,158,131)', 
 					nameList[j]+'And'+nameList[j+i]+' similarityCircle real circleOrder'+i+'-'+j);
 
 			if(i == 0){
@@ -329,7 +329,7 @@ function drawSimilarityCircle(){
 			}else{
 				drawCircle(treeInit.svg, 
 						x+xDif*j+xDif/2, y+height-yDif*i, 
-						3, 'rgba(53,158,131,0)', 
+						treeDif.xDif/8, 'rgba(53,158,131,0)', 
 						nameList[j]+'And'+nameList[j+i]+' similarityCircle circleOrder'+i+'-'+j);
 			}
 		}
@@ -417,7 +417,7 @@ function divideCluster(similarityArr){
 //				console.log('xxxx');
 				drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
 //						0.5, 'linear', 'rgba(185,205,116,0.7)');
-						0.5, 'linear', 'rgba(25,15,25,0.7)');
+						0.5, 'linear', 'rgba(5,0,15,1)');
 			}else if(i==6){
 				drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
 //						0.5, 'linear', 'rgba(195,215,126,0.7)');
@@ -425,19 +425,19 @@ function divideCluster(similarityArr){
 			}else{
 				drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
 //						0.5, 'linear', 'rgba(205,225,136,0.7)');
-						0.5, 'linear', 'rgba(25,15,25,0.7)');
+						0.5, 'linear', 'rgba(82,86,97,0.7)');
 			}
 		}else if(i<8){
 			if(i==7){
 				secondCluster = drawGraph(treeInit.svg, lineData, 'x', 'rgba(255,255,255,0.8)', 
 //						0.5, 'linear', 'rgba(205,225,136,0.7)');
-						0.5, 'linear', 'rgba(25,15,25,0.7)');
+						0.5, 'linear', 'rgba(82,86,97,0.7)');
 
 						
 			}else{
 				drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
 //						0.5, 'linear', 'rgba(215,235,146,0.7)');				
-						0.5, 'linear', 'rgba(25,15,25,0.7)');				
+						0.5, 'linear', 'rgba(82,86,97,0.7)');				
 			}
 		}
 		lineData = [];
@@ -474,7 +474,7 @@ function divideCluster(similarityArr){
 			lineData.push({x : cx - xDif/2, y : y+height});
 		}
 		drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
-				0.5, 'linear', 'rgba(175,195,106,0.7)');
+				0.5, 'linear', 'rgba(184,204,117,1)');
 //				0.5, 'linear', 'rgba(30,21,32,0.7)');
 		lineData = [];
 	}
@@ -1006,7 +1006,7 @@ function drawVariableGuideLine(init, question, order, gTag){
 				x, y+dif.yDif*order + (rectHeight/range*i), 
 				x+width, y+dif.yDif*order + (rectHeight/range*i), 
 //				0.5, 'rgba(82,86,97,1)', question+' order'+i); rgba(28,28,28,1)
-				0.5, 'rgba(25,10,20,1)', question+' order'+i);
+				0.5, 'rgba(82,86,97,1)', question+' order'+i);
 	}
 }
 
@@ -1025,7 +1025,7 @@ function drawPatientRectGuideLine(gTag, init, order, rect){
 				x + quarter*(i+1), bigY, 
 				x + quarter*(i+1), bigY+bigHeight, 
 //				0.5, 'rgba(82,86,97,1)', 'verticalGuideLine order'+i); rgba(28,28,28,1)
-				0.5, 'rgba(25,10,20,1)', 'verticalGuideLine order'+i);
+				0.5, 'rgba(82,86,97,1)', 'verticalGuideLine order'+i);
 //				0.5, 'rgba(223,227,187,1)', 'verticalGuideLine order'+i);
 	}
 }

@@ -13,12 +13,11 @@
   
   <div id="treeArea">
     <select id="buttonList">
-      <option value="kmmseList">K-MMSE</option>
-      <option value="kdsqlList">KDSQ</option>
+      <option value="kdsqlList" selected="selected">KDSQ</option>
       <option value="siadlList">SIADL</option>
-      <option value="npiList">CGA-NPI</option>
       <option value="cdrList">CDR</option>
       <option value="ksfList">KSF-GDS</option>
+      <option value="kmmseList">K-MMSE</option>
     </select>
   </div>
   
