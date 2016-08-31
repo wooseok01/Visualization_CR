@@ -19,6 +19,7 @@ var rectWidth;
 var treePerson = [];
 var treeNameList = [];
 var similarityArr = [];
+var secondCluster;
 
 d3.selection.prototype.moveToFront = function() {  
 	return this.each(function(){
@@ -62,23 +63,35 @@ async.waterfall([
         	//get all questionsData
     		ajaxCall('./getCredosQuestions', init, dif, function(qList){
     			var kmmseList = [];
-    			var kdsqlList = [];
-    			var siadlList = [];
+    			var kdsqlList = ['q_kdsq_1','q_kdsq_3','q_kdsq_4','q_kdsq_5','q_kdsq_11','q_kdsq_12'];
+    			var siadlList = ['a_siadl_c1','a_siadl_c2','a_siadl_c8','a_siadl_c13','a_siadl_c14','a_siadl_c15'];
     			var npiList = [];
     			var cdrList = [];
     			var ksfList = [];
-
+    			 
     			for(var i=0; i<qList.length; i++){
     				var listObj = qList[i];
     				if(listObj.search('km_') != -1){
     					if(listObj.search('pent') == -1 && listObj.search('total') == -1){
     						kmmseList.push(listObj);
     					}
-    				}else if(listObj.search('q_kdsq') != -1){kdsqlList.push(listObj);}
-    				else if(listObj.search('a_siadl') != -1){
-    					if(listObj.search('a_siadl_p') == -1)
-    						siadlList.push(listObj);
-    					
+    				}else if(listObj.search('q_kdsq') != -1){
+    					if(listObj.search('q_kdsq_1') != -1 || listObj.search('q_kdsq_3') != -1 || 
+        					listObj.search('q_kdsq_4') != -1 || listObj.search('q_kdsq_5') != -1 ||
+    						listObj.search('q_kdsq_11') != -1 || listObj.search('q_kdsq_12') != -1){
+    						continue;
+    					}
+    					kdsqlList.push(listObj);
+    				}else if(listObj.search('a_siadl') != -1){
+    					if(listObj.search('a_siadl_p') == -1){
+    						if(listObj.search('a_siadl_c1') != -1 || listObj.search('a_siadl_c2') != -1 || 
+        						listObj.search('a_siadl_c8') != -1 || listObj.search('a_siadl_c13') != -1 ||
+    							listObj.search('a_siadl_c14') != -1 || listObj.search('a_siadl_c15') != -1){
+        						continue;
+        					}else{
+        						siadlList.push(listObj);
+        					}
+    					}
     				}else if(listObj.search('b_cga_npi') != -1){npiList.push(listObj);}
     				else if(listObj.search('g_cdr') != -1){cdrList.push(listObj);}
     				else if(listObj.search('b_ksf_gds') != -1){ksfList.push(listObj);}
@@ -93,7 +106,7 @@ async.waterfall([
 
     				ksfList : ksfList
     			};
-
+//    			console.log(siadlList);
     			cb(null, data);
     		});
     	});
@@ -140,10 +153,9 @@ async.waterfall([
     	//data input!
     	dataInputMatrix(init);
     	d3.selectAll('.verticalGuideLine').moveToFront();
-
+    	
     	cb(null,'done');
-    }
-    ],
+    }],
     function(err, result){
 		if(err != null){
 			console.log(err.message);
@@ -231,19 +243,19 @@ function treeInit(){
 	
 	drawText(svg, 
 			graphW-padding*3 + 20, padding*2-1, 
-			10, 'white', 'guideDescription', 'Score').style({
+			10, 'rgba(197,193,169,1)', 'guideDescription', 'Score').style({
 				'text-anchor' : 'start'
 			});
 	drawText(svg, 
 			graphW-padding*3 + 20, padding*3-1, 
-			10, 'white', 'guideDescription', 'No data');
+			10, 'rgba(197,193,169,1)', 'guideDescription', 'No data');
 	drawText(svg, 
 			graphW-padding*3 + 20, padding*4-3, 
-			10, 'white', 'guideDescription', 'High similarity');
+			10, 'rgba(197,193,169,1)', 'guideDescription', 'High similarity');
 	
 	drawText(svg, 
 			graphW-padding*3 + 20, padding*5-3, 
-			10, 'white', 'guideDescription', 'Low similarity');
+			10, 'rgba(197,193,169,1)', 'guideDescription', 'Low similarity');
 	
 	return {
 		svg : svg,
@@ -278,7 +290,8 @@ function drawBasicTriangle(treeInit){
 	lineData.push({x : x+width, y : y+height});
 	
 	drawGraph(treeInit.svg, lineData, '', 'rgba(208,208,212,0.8)', 
-			0.5, 'linear', 'rgba(225,245,156,0.15)');
+//			0.5, 'linear', 'rgba(225,245,156,0.15)');
+			0.5, 'linear', 'rgba(35,30,45,1)');
 	
 	treeDif = {
 			xDif : width/treePerson.length,
@@ -356,21 +369,20 @@ function divideCluster(similarityArr){
 	var unSameCircle = ['MzUwMTAxLTIwMDAzMTEg', 'MjkwNDA5LTEwMzc4Mjcg',
 	                    'MjMwMzEyLTE4MjkyMTQg', 'MzYwNTIxLTEwNDE5MTQg',
 	                    'NDExMjE1LTE0NjY3Mjkg', 'MzYwNTIxLTEwNDE5MTQg',
-	                    'MzUwMTAxLTIwMDAzMTEg', 'NDEwODEzLTI0NzE2MTEg',
-	                    'MzYxMjAyLTIxMDg3MTkg', 'MjkwNDA5LTEwMzc4Mjcg',
-	                    'NDAxMDE1LTEyMzE3MTEg', 'NDkxMjE1LTIwNTYyMzgg',
 	                    'NDAxMDE1LTEyMzE3MTEg', 'MzYxMjAyLTIxMDg3MTkg',
-	                    'NDAxMDE1LTEyMzE3MTEg', 'NDEwODEzLTI0NzE2MTEg'];
-	//MzYwNTIxLTEwNDE5MTQg
+	                    'NDAxMDE1LTEyMzE3MTEg', 'NDEwODEzLTI0NzE2MTEg',
+	                    'MzUwMTAxLTIwMDAzMTEg', 'NDEwODEzLTI0NzE2MTEg', // 여기 꼬
+	                    'NDAxMDE1LTEyMzE3MTEg', 'NDkxMjE1LTIwNTYyMzgg'
+	                    ];
+	//MjkwNDA5LTEwMzc4MjcgAndNDEwODEzLTI0NzE2MTEg
 	//
 	var unSameMiddleList = ['.MzUwMTAxLTIwMDAzMTEgAndMjkwNDA5LTEwMzc4Mjcg',
 	                        '.MjMwMzEyLTE4MjkyMTQgAndMzYwNTIxLTEwNDE5MTQg',
 	                        '.NDExMjE1LTE0NjY3MjkgAndMzYwNTIxLTEwNDE5MTQg',
-	                        '.MzUwMTAxLTIwMDAzMTEgAndNDEwODEzLTI0NzE2MTEg',
-	                        '.MzYxMjAyLTIxMDg3MTkgAndMjkwNDA5LTEwMzc4Mjcg',
-	                        '.NDAxMDE1LTEyMzE3MTEgAndNDkxMjE1LTIwNTYyMzgg',
 	                        '.NDAxMDE1LTEyMzE3MTEgAndMzYxMjAyLTIxMDg3MTkg',
-	                        '.NDAxMDE1LTEyMzE3MTEgAndNDEwODEzLTI0NzE2MTEg'
+	                        '.NDAxMDE1LTEyMzE3MTEgAndNDEwODEzLTI0NzE2MTEg',
+	                        '.MzUwMTAxLTIwMDAzMTEgAndNDEwODEzLTI0NzE2MTEg', //여기 꼬임
+	                        '.NDAxMDE1LTEyMzE3MTEgAndNDkxMjE1LTIwNTYyMzgg'
 //	                        '.NDIxMjEyLTIwMjM1MTggAndNDAxMDE1LTEyMzE3MTEg'
 	                        ];
 	
@@ -388,39 +400,48 @@ function divideCluster(similarityArr){
 		//rgba(0,17,30,1)
 		if(i<2){
 			drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
-					0.5, 'linear', 'rgba(195,215,126,0.7)');
+//					0.5, 'linear', 'rgba(195,215,126,0.7)');
+					0.5, 'linear', 'rgba(25,20,35,1)');
 		}else if(i<5){
 			if(i==2){
 				drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
-						0.5, 'linear', 'rgba(185,205,116,0.7)');
+//						0.5, 'linear', 'rgba(185,205,116,0.7)');
+						0.5, 'linear', 'rgba(15,10,25,1)'); //- > 이거!
 			}else{
 				drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
-						0.5, 'linear', 'rgba(185,205,116,0.7)');				
+//						0.5, 'linear', 'rgba(185,205,116,0.7)');
+						0.5, 'linear', 'rgba(25,20,35,1)');
 			}
 		}else if(i<7){
 			if(i==5){
+//				console.log('xxxx');
 				drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
-						0.5, 'linear', 'rgba(185,205,116,0.7)');
+//						0.5, 'linear', 'rgba(185,205,116,0.7)');
+						0.5, 'linear', 'rgba(25,15,25,0.7)');
 			}else if(i==6){
 				drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
-						0.5, 'linear', 'rgba(195,215,126,0.7)');
+//						0.5, 'linear', 'rgba(195,215,126,0.7)');
+						0.5, 'linear', 'rgba(15,10,25,1)'); //- > 이거!
 			}else{
 				drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
-						0.5, 'linear', 'rgba(205,225,136,0.7)');			
+//						0.5, 'linear', 'rgba(205,225,136,0.7)');
+						0.5, 'linear', 'rgba(25,15,25,0.7)');
 			}
 		}else if(i<8){
 			if(i==7){
-				drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
-						0.5, 'linear', 'rgba(205,225,136,0.7)');
+				secondCluster = drawGraph(treeInit.svg, lineData, 'x', 'rgba(255,255,255,0.8)', 
+//						0.5, 'linear', 'rgba(205,225,136,0.7)');
+						0.5, 'linear', 'rgba(25,15,25,0.7)');
+
+						
 			}else{
 				drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
-						0.5, 'linear', 'rgba(215,235,146,0.7)');				
+//						0.5, 'linear', 'rgba(215,235,146,0.7)');				
+						0.5, 'linear', 'rgba(25,15,25,0.7)');				
 			}
 		}
 		lineData = [];
 	}
-	
-	
 	
 	for(var i=0; i<sameCircle.length/2; i++){
 		cx = $('#'+sameCircle[i*2]).attr('cx')*1;
@@ -454,6 +475,7 @@ function divideCluster(similarityArr){
 		}
 		drawGraph(treeInit.svg, lineData, '', 'rgba(255,255,255,0.8)', 
 				0.5, 'linear', 'rgba(175,195,106,0.7)');
+//				0.5, 'linear', 'rgba(30,21,32,0.7)');
 		lineData = [];
 	}
 	d3.selectAll('.real').moveToFront();
@@ -491,8 +513,8 @@ function divideCluster(similarityArr){
 		var first = split[0];
 		var second = (split[1].split(' '))[0];
 		
-		$('#'+first+'NameGraph').find('.phase').attr('stroke','white');
-		$('#'+second+'NameGraph').find('.phase').attr('stroke','white');
+		$('#'+first+'NameGraph').find('.phase').attr('stroke','rgba(197,193,169,1)');
+		$('#'+second+'NameGraph').find('.phase').attr('stroke','rgba(197,193,169,1)');
 		
 		d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
 		d3.selectAll('.real').attr('fill','rgb(53,158,131)');
@@ -709,7 +731,7 @@ function drawPhaseGuideLine(init){
 	var height = init.phaseGraphRoot.attr('height')*1;
 	
 	var phaseList = ['SMI', 'MCI VCI','AD SVD'];
-	var phaseColor = ['white','white','white'];
+	var phaseColor = ['rgba(197,193,169,1)','rgba(197,193,169,1)','rgba(197,193,169,1)'];
 	
 	for(var i=0; i<3; i++){
 		drawLine(init.svg, 
@@ -845,7 +867,20 @@ function makePatientRect(init, dif){
 	var height = $('#matrixSvg').attr('height')*1;
 	var x = $('#matrixSvg').attr('x')*1;
 	var y = $('#matrixSvg').attr('y')*1;
-
+	var color = 'rgba(221,214,197,';
+	var list = [];
+	switch(selected){
+		case 'kmmseList' : break;
+		case 'kdsqlList' : 
+			list = ['q_kdsq_1','q_kdsq_3','q_kdsq_4','q_kdsq_5','q_kdsq_11','q_kdsq_12']; 
+			break;
+		case 'siadlList' : 
+			list = ['a_siadl_c1','a_siadl_c2','a_siadl_c8','a_siadl_c13','a_siadl_c14','a_siadl_c15'];
+			break;
+		case 'npiList' : break;
+		case 'cdrList' : break;
+		case 'ksfList' : break;
+	}
 	for(var i=0; i<personList.length; i++){
 		var gTag = init.svg.append('g').attr({
 			id : personList[i].first.id+' rect',
@@ -853,10 +888,21 @@ function makePatientRect(init, dif){
 		});
 		
 		for(var j=0; j<questions.length; j++){
-			var rect = drawRect(gTag,
-					x+dif.xDif*i, y+dif.yDif*j, 
-					dif.xDif - 3.5, dif.yDif - 1.8, 'rgba(215,235,146,1)', 
-					personList[i].first.id+' rectangle '+questions[j], '');
+			var rect ;
+			if(j<list.length && questions[j] == list[j]){
+				rect = drawRect(gTag,
+						x+dif.xDif*i, y+dif.yDif*j, 
+//						dif.xDif - 3.5, dif.yDif - 1.8, 'rgba(215,235,146,1)', 
+						dif.xDif - 3.5, dif.yDif - 1.8, color+'1)',
+						personList[i].first.id+' rectangle '+questions[j], ''); 
+			}else{
+				rect = drawRect(gTag,
+						x+dif.xDif*i, y+dif.yDif*j, 
+//						dif.xDif - 3.5, dif.yDif - 1.8, 'rgba(215,235,146,1)', 
+						dif.xDif - 3.5, dif.yDif - 1.8, color+'0.5)',
+						personList[i].first.id+' rectangle '+questions[j], ''); 
+			}
+			
 			
 			rect.on('mouseover', function(){
 				var objId = $(this).parent().attr('id');
@@ -908,7 +954,7 @@ function makePatientRect(init, dif){
 				$('#'+id+'NameGraph').find('.phase').attr('stroke','rgba(255,255,255,0.85)');
 				var thisClass = $(this).attr('class');
 				var qName = thisClass.split(' ')[2];
-				$('text.'+qName).attr('fill','white');
+				$('text.'+qName).attr('fill','rgba(197,193,169,1)');
 				
 				$('.Hover').remove();
 				$('.rectHoverVerticalGuide').remove();
@@ -930,7 +976,7 @@ function drawVariableText(init, dif){
 		
 		drawText(gTag, 
 				x-7, dif.yDif*i-(dif.yDif/3)+y, 
-				dif.yDif, 'white',
+				dif.yDif, 'rgba(197,193,169,1)',
 				questions[i], questions[i])
 				.attr({'text-anchor' : 'end'})
 				.style({'font-size' : '7px'});
@@ -959,7 +1005,8 @@ function drawVariableGuideLine(init, question, order, gTag){
 		drawLine(gTag, 
 				x, y+dif.yDif*order + (rectHeight/range*i), 
 				x+width, y+dif.yDif*order + (rectHeight/range*i), 
-				0.5, 'rgba(82,86,97,1)', question+' order'+i);
+//				0.5, 'rgba(82,86,97,1)', question+' order'+i); rgba(28,28,28,1)
+				0.5, 'rgba(25,10,20,1)', question+' order'+i);
 	}
 }
 
@@ -977,7 +1024,9 @@ function drawPatientRectGuideLine(gTag, init, order, rect){
 		drawLine(gTag, 
 				x + quarter*(i+1), bigY, 
 				x + quarter*(i+1), bigY+bigHeight, 
-				0.5, 'rgba(82,86,97,1)', 'verticalGuideLine order'+i);
+//				0.5, 'rgba(82,86,97,1)', 'verticalGuideLine order'+i); rgba(28,28,28,1)
+				0.5, 'rgba(25,10,20,1)', 'verticalGuideLine order'+i);
+//				0.5, 'rgba(223,227,187,1)', 'verticalGuideLine order'+i);
 	}
 }
 
@@ -992,7 +1041,21 @@ function dataInputMatrix(init){
 }
 
 function drawSmallVarGraph(init, gTag, person, orderList, order){
-	
+	var list = []; 
+	var color = ['rgba(54,163,135,','rgba(49,58,66,1'];
+	var index = 0;
+	switch(selected){
+		case 'kmmseList' : break;
+		case 'kdsqlList' : 
+			list = ['q_kdsq_1','q_kdsq_3','q_kdsq_4','q_kdsq_5','q_kdsq_11','q_kdsq_12']; 
+			break;
+		case 'siadlList' : 
+			list = ['a_siadl_c1','a_siadl_c2','a_siadl_c8','a_siadl_c13','a_siadl_c14','a_siadl_c15'];
+			break;
+		case 'npiList' : break;
+		case 'cdrList' : break;
+		case 'ksfList' : break;
+	}
 	for(var i=0; i<questions.length; i++){
 		var rect = gTag.select('.'+questions[i]);
 
@@ -1000,7 +1063,6 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 		var y = rect.attr('y')*1;
 		var width = rect.attr('width')*1;
 		var height = rect.attr('height')*1;
-
 		for(var j=0; j<orderList.length; j++){
 			if(person[orderList[j]] != null){
 				if(person[orderList[j]][questions[i]] != 9 && 
@@ -1009,29 +1071,44 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 					
 					value = changeValueToYPos(questions[i], value, height)
 					var rect;
+					
 					if(value != 0){
-						rect = drawRect(gTag, 
-								x + width/5*j, y+(height - value), 
-								width/5, value, 
-								'rgba(53,158,131,1)', 'smallRect order'+i, '');						
+						if(i<list.length && questions[i] == list[i]){
+							
+							rect = drawRect(gTag, 
+									x + width/5*j, y+(height - value), 
+									width/5, value, 
+//									'rgba(53,158,131,1)', 'smallRect order'+i, '');	
+									color[0]+'1)', person[orderList[j]].id+' smallRect '+questions[i]+' order'+i, '');
+						}else{
+							rect = drawRect(gTag, 
+									x + width/5*j, y+(height - value), 
+									width/5, value, 
+//									'rgba(53,158,131,1)', 'smallRect order'+i, '');	
+									color[0]+'0.5)', person[orderList[j]].id+' smallRect '+questions[i]+' order'+i, '');
+						}
+						
 					}else{
 						rect = drawRect(gTag, 
 								x + width/5*j, y+(height - value), 
 								width/5, value, 
-								'rgba(215,235,146,1)', 'smallRect order'+i, '');
+//								'rgba(215,235,146,1)', 'smallRect order'+i, '');
+								'rgba(49,58,66,1)', person[orderList[j]].id+' smallRect '+questions[i]+' order'+i, '');
 					}
 				}else if(person[orderList[j]][questions[i]] != 9 || 
 						person[orderList[j]][questions[i]] != 'NA'){
 					rect = drawRect(gTag, 
 							x+width/5*j, y, 
 							width/5, height, 
-							'rgba(49,58,66,1)', 'smallRect order'+i, '');
+//							'rgba(49,58,66,1)', 'smallRect order'+i, '');
+							'rgba(49,58,66,1)', person[orderList[j]].id+' smallRect '+questions[i]+' order'+i, '');
 				}
 			}else{
 				rect = drawRect(gTag, 
 						x+width/5*j, y, 
 						width/5, height, 
-						'rgba(49,58,66,1)', 'smallRect order'+i, '');
+//						'rgba(49,58,66,1)', 'smallRect order'+i, '');
+						'rgba(49,58,66,1)', person[orderList[0]].id+' smallRect '+questions[i]+' order'+i, '');
 			}
 			rect.on('mouseover', function(){
 				var objId = $(this).parent().attr('id');
@@ -1055,12 +1132,12 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 				
 				//가로 가이드라인!
 				var thisClass = $(this).attr('class');
-				var thisOrder = thisClass.split(' ')[1];
+				var thisOrder = thisClass.split(' ')[3];
 				thisOrder = thisOrder.substring('order'.length, thisOrder.length)*1;
 				$('#parallelGuideLine'+thisOrder).find('text').attr('fill','orange');
-				
+				var parallelSplit = $(this).attr('class').split(' ');
 				drawRect(init.svg, 
-						init.matrixRoot.attr('x')*1, $(this).attr('y')*1, 
+						init.matrixRoot.attr('x')*1, $('.'+parallelSplit[0]+'.'+parallelSplit[2]).attr('y')*1, 
 						dif.xDif*personList.length-3.5, dif.yDif, 
 						'none', 'rectHoverParallelGuide', '').attr('stroke','orange');
 				//here
@@ -1085,9 +1162,9 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 				$('#'+id+'NameGraph').find('.phase').attr('stroke','rgba(255,255,255,0.85)');
 				
 				var thisClass = $(this).attr('class');
-				var thisOrder = thisClass.split(' ')[1];
+				var thisOrder = thisClass.split(' ')[3];
 				thisOrder = thisOrder.substring('order'.length, thisOrder.length)*1;
-				$('#parallelGuideLine'+thisOrder).find('text').attr('fill','white');
+				$('#parallelGuideLine'+thisOrder).find('text').attr('fill','rgba(197,193,169,1)');
 				
 				$('.rectHoverVerticalGuide').remove();
 				$('.rectHoverParallelGuide').remove();
@@ -1112,37 +1189,39 @@ function changeValueToYPos(question, value, height){
 	
 	
 }
-
-$('#buttonList').change(function(){
-	var thisObj = $(this).find(':selected');
-	var rect = $('#matrixArea > svg > matrixSvg');
-	$('#matrixArea > svg').fadeOut('slow',function(){
-		$('#matrixArea > svg').empty();
-		
-		questions = questionsList[thisObj.val()];
-		
-		init.svg.append('rect').attr({
-			x : init.padding + 30,
-			y : 20,
-			width : init.graphW,
-			height : init.graphH,
-			fill : 'none',
-			stroke : 'none',
-			id : 'matrixSvg'
+$(document).ready(function(){
+	$('#buttonList').change(function(){
+		var thisObj = $(this).find(':selected');
+		var rect = $('#matrixArea > svg > matrixSvg');
+		$('#matrixArea > svg').fadeOut('slow',function(){
+			$('#matrixArea > svg').empty();
+			selected = thisObj.val();
+			questions = questionsList[selected];
+			
+			init.svg.append('rect').attr({
+				x : init.padding + 30,
+				y : 20,
+				width : init.graphW,
+				height : init.graphH,
+				fill : 'none',
+				stroke : 'none',
+				id : 'matrixSvg'
+			});
+			dif = {
+		    		xDif : init.graphW/nameList.length,
+		    		yDif : init.graphH/questions.length
+		    	}
+		    	makePatientRect(init, dif);
+		    	drawVariableText(init, dif);
+		    	dataInputMatrix(init);
+		    	drawPhaseGraph(init, dif);
+		    	d3.selectAll('.verticalGuideLine').moveToFront();
+		    	$('#matrixArea > svg').fadeIn('slow',function(){
+		    		
+		    	});
 		});
-		dif = {
-	    		xDif : init.graphW/nameList.length,
-	    		yDif : init.graphH/questions.length
-	    	}
-	    	makePatientRect(init, dif);
-	    	drawVariableText(init, dif);
-	    	dataInputMatrix(init);
-	    	drawPhaseGraph(init, dif);
-	    	d3.selectAll('.verticalGuideLine').moveToFront();
-	    	$('#matrixArea > svg').fadeIn('slow',function(){
-	    		
-	    	});
 	});
 	
 	
 });
+
