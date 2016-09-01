@@ -55,7 +55,7 @@ async.waterfall([
 	},function(data, cb){
 		treeNameList = data;
 		nameList = data;
-		drawSimilarityCircle();
+//		drawSimilarityCircle();
 		cb(null);
 	}, function(cb){
     	//get all patientData
@@ -153,7 +153,7 @@ async.waterfall([
     	//data input!
     	dataInputMatrix(init);
     	d3.selectAll('.verticalGuideLine').moveToFront();
-    	
+    	drawSimilarityCircle();
     	cb(null,'done');
     }],
     function(err, result){
@@ -501,12 +501,48 @@ function divideCluster(similarityArr){
 		if(first != second){
 			var firstClass = $('#'+first).attr('class');
 			var secondClass = $('#'+second).attr('class');
+			
 			split = firstClass.split(' ');
+			firstClass = split[0].split('And')[0];
 			guideCircleColorChange(split[split.length-1]);
+			
 			split = secondClass.split(' ');
+			secondClass = split[0].split('And')[0];
 			guideCircleColorChange(split[split.length-1]);
+			
+			var guideX = $('.'+firstClass+'.smallRect.order0').parent().find('rect').attr('x')*1;
+			var guideY = $('.'+firstClass+'.smallRect.order0').parent().find('rect').attr('y')*1;
+			
+			drawRect(init.svg, 
+					guideX, guideY, 
+					rectWidth, init.matrixRoot.attr('height')*1-3.5, 
+					'none', 'Hover', '').attr('stroke','orange');
+			
+			guideX = $('.'+secondClass+'.smallRect.order0').parent().find('rect').attr('x')*1;
+			guideY = $('.'+secondClass+'.smallRect.order0').parent().find('rect').attr('y')*1;
+			
+			drawRect(init.svg, 
+					guideX, guideY, 
+					rectWidth, init.matrixRoot.attr('height')*1-3.5, 
+					'none', 'Hover', '').attr('stroke','orange');
+//			console.log(temp.attr('x')+' '+temp2.attr('x'));
+		}else{
+			var firstClass = $('#'+first).attr('class');
+			
+			split = firstClass.split(' ');
+			firstClass = split[0].split('And')[0];
+			
+			var guideX = $('.'+firstClass+'.smallRect.order0').parent().find('rect').attr('x')*1;
+			var guideY = $('.'+firstClass+'.smallRect.order0').parent().find('rect').attr('y')*1;
+			
+			drawRect(init.svg, 
+					guideX, guideY, 
+					rectWidth, init.matrixRoot.attr('height')*1-3.5, 
+					'none', 'Hover', '').attr('stroke','orange');
 		}
-
+		
+		
+		
 	}).on('mouseout', function(){
 		var className = $(this).attr('class');
 		var split = className.split('And');
