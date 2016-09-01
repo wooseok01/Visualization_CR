@@ -67,7 +67,7 @@ async.waterfall([
     			var siadlList = ['a_siadl_c1','a_siadl_c2','a_siadl_c8','a_siadl_c13','a_siadl_c14','a_siadl_c15'];
     			var npiList = [];
     			var cdrList = [];
-    			var ksfList = [];
+    			var ksfList = ['b_ksf_gds_9','b_ksf_gds_14'];
     			 
     			for(var i=0; i<qList.length; i++){
     				var listObj = qList[i];
@@ -879,7 +879,9 @@ function makePatientRect(init, dif){
 			break;
 		case 'npiList' : break;
 		case 'cdrList' : break;
-		case 'ksfList' : break;
+		case 'ksfList' : 
+			list = ['b_ksf_gds_9','b_ksf_gds_14'];
+			break;
 	}
 	for(var i=0; i<personList.length; i++){
 		var gTag = init.svg.append('g').attr({
@@ -1054,7 +1056,9 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 			break;
 		case 'npiList' : break;
 		case 'cdrList' : break;
-		case 'ksfList' : break;
+		case 'ksfList' : 
+			list = ['b_ksf_gds_9','b_ksf_gds_14'];
+			break;
 	}
 	for(var i=0; i<questions.length; i++){
 		var rect = gTag.select('.'+questions[i]);
