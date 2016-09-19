@@ -535,18 +535,20 @@ function divideCluster(similarityArr){
 			
 			var guideX = $('.'+firstClass+'.smallRect.order0').parent().find('rect').attr('x')*1;
 			var guideY = $('.'+firstClass+'.smallRect.order0').parent().find('rect').attr('y')*1;
-			
+			var guideHeight = $('.'+firstClass+'.smallRect.order0').parent().find('rect').attr('height')*1;
+
 			drawRect(init.svg, 
 					guideX, guideY, 
-					rectWidth, init.matrixRoot.attr('height')*1-3.5, 
+					rectWidth, (guideHeight+1.8)*questions.length, 
 					'none', 'Hover', '').attr('stroke','orange');
 			
 			guideX = $('.'+secondClass+'.smallRect.order0').parent().find('rect').attr('x')*1;
 			guideY = $('.'+secondClass+'.smallRect.order0').parent().find('rect').attr('y')*1;
+			guideHeight = $('.'+secondClass+'.smallRect.order0').parent().find('rect').attr('height')*1;
 			
 			drawRect(init.svg, 
 					guideX, guideY, 
-					rectWidth, init.matrixRoot.attr('height')*1-3.5, 
+					rectWidth, (guideHeight+1.8)*questions.length, 
 					'none', 'Hover', '').attr('stroke','orange');
 //			console.log(temp.attr('x')+' '+temp2.attr('x'));
 		}else{
@@ -557,10 +559,11 @@ function divideCluster(similarityArr){
 			
 			var guideX = $('.'+firstClass+'.smallRect.order0').parent().find('rect').attr('x')*1;
 			var guideY = $('.'+firstClass+'.smallRect.order0').parent().find('rect').attr('y')*1;
+			var guideHeight = $('.'+firstClass+'.smallRect.order0').parent().find('rect').attr('height')*1;
 			
 			drawRect(init.svg, 
 					guideX, guideY, 
-					rectWidth, init.matrixRoot.attr('height')*1-3.5, 
+					rectWidth, (guideHeight+1.8)*questions.length, 
 					'none', 'Hover', '').attr('stroke','orange');
 		}
 		
