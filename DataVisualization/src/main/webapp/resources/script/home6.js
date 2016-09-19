@@ -62,13 +62,20 @@ async.waterfall([
     	ajaxCall('./getCredosData3', init, dif, function(data){
         	//get all questionsData
     		ajaxCall('./getCredosQuestions', init, dif, function(qList){
+    			var overallList = [];
     			var kmmseList = [];
     			var kdsqlList = ['q_kdsq_1','q_kdsq_3','q_kdsq_4','q_kdsq_5','q_kdsq_11','q_kdsq_12'];
     			var siadlList = ['a_siadl_c1','a_siadl_c2','a_siadl_c8','a_siadl_c13','a_siadl_c14','a_siadl_c15'];
     			var npiList = [];
     			var cdrList = [];
     			var ksfList = ['b_ksf_gds_9','b_ksf_gds_14'];
+    			
+    			overallList = overallList.concat(kdsqlList);
+    			overallList = overallList.concat(siadlList);
+    			overallList = overallList.concat(ksfList);
     			 
+    			console.log(overallList);
+    			
     			for(var i=0; i<qList.length; i++){
     				var listObj = qList[i];
     				if(listObj.search('km_') != -1){
@@ -109,8 +116,8 @@ async.waterfall([
     				siadlList : siadlList,
     				npiList : npiList,
     				cdrList : cdrList,
-
-    				ksfList : ksfList
+    				ksfList : ksfList,
+    				overallList : overallList
     			};
 //    			console.log(siadlList);
     			cb(null, data);
@@ -118,7 +125,7 @@ async.waterfall([
     	});
     },function(data, cb){
     	if(selected == null){
-    		selected = 'kdsqlList';
+    		selected = 'overallList';
     		questions = questionsList[selected];
     	}
     	//make personList & nameList
@@ -147,10 +154,20 @@ async.waterfall([
     }, function(cb){
     	//draw basic template
     	
-    	dif = {
-    		xDif : init.graphW/nameList.length,
-    		yDif : init.graphH/questions.length
+    	if(selected != 'kmmseList'){
+    		dif = {
+    	    	xDif : init.graphW/nameList.length,
+    	    	//yDif : init.graphH/questions.length
+    	    	yDif : init.graphH/(questionsList['kmmseList'].length-5)
+    	    }
+    	}else{
+    		dif = {
+    			xDif : init.graphW/nameList.length,
+    	    	yDif : init.graphH/questions.length
+    		}
     	}
+    	
+    	
     	makePatientRect(init, dif);
     	drawVariableText(init, dif);
     	drawPhaseGraph(init, dif);
@@ -921,9 +938,8 @@ function makePatientRect(init, dif){
 			break;
 		case 'npiList' : break;
 		case 'cdrList' : break;
-		case 'ksfList' : 
-			list = ['b_ksf_gds_9','b_ksf_gds_14'];
-			break;
+		case 'ksfList' : list = ['b_ksf_gds_9','b_ksf_gds_14']; break;
+		case 'overallList' : list = questionsList['overallList']; break;
 	}
 	for(var i=0; i<personList.length; i++){
 		var gTag = init.svg.append('g').attr({
@@ -937,7 +953,7 @@ function makePatientRect(init, dif){
 				rect = drawRect(gTag,
 						x+dif.xDif*i, y+dif.yDif*j, 
 //						dif.xDif - 3.5, dif.yDif - 1.8, 'rgba(215,235,146,1)', 
-						dif.xDif - 3.5, dif.yDif - 1.8, color+'1)',
+						dif.xDif - 3.5, dif.yDif - 1.8, color+'1)', 
 						personList[i].first.id+' rectangle '+questions[j], ''); 
 			}else{
 				rect = drawRect(gTag,
@@ -946,7 +962,6 @@ function makePatientRect(init, dif){
 						dif.xDif - 3.5, dif.yDif - 1.8, color+'0.5)',
 						personList[i].first.id+' rectangle '+questions[j], ''); 
 			}
-			
 			
 			rect.on('mouseover', function(){
 				var objId = $(this).parent().attr('id');
@@ -957,7 +972,6 @@ function makePatientRect(init, dif){
 				var first = split[0];
 				var second = (split[1].split(' '))[0];
 				
-				//
 				$('#'+id).attr('fill','orange');
 				treeNodeHoverFunction(first, second, $('#'+id), 'Hover', 'rgba(255,165,0,0.2)');
 				$('#'+id+'NameGraph').find('.phase').attr('stroke','orange');
@@ -1101,6 +1115,10 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 		case 'ksfList' : 
 			list = ['b_ksf_gds_9','b_ksf_gds_14'];
 			break;
+		case 'overallList' : 
+			list = questionsList['overallList'];
+			break;
+			//here!!
 	}
 	for(var i=0; i<questions.length; i++){
 		var rect = gTag.select('.'+questions[i]);
@@ -1109,6 +1127,7 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 		var y = rect.attr('y')*1;
 		var width = rect.attr('width')*1;
 		var height = rect.attr('height')*1;
+		
 		for(var j=0; j<orderList.length; j++){
 			if(person[orderList[j]] != null){
 				if(person[orderList[j]][questions[i]] != 9 && 
@@ -1253,10 +1272,18 @@ $(document).ready(function(){
 				stroke : 'none',
 				id : 'matrixSvg'
 			});
-			dif = {
-		    		xDif : init.graphW/nameList.length,
-		    		yDif : init.graphH/questions.length
-		    	}
+			if(selected != 'kmmseList'){
+	    		dif = {
+	    	    	xDif : init.graphW/nameList.length,
+	    	    	//yDif : init.graphH/questions.length
+	    	    	yDif : init.graphH/(questionsList['kmmseList'].length-5)
+	    	    }
+	    	}else{
+	    		dif = {
+	    			xDif : init.graphW/nameList.length,
+	    	    	yDif : init.graphH/questions.length
+	    		}
+	    	}
 		    	makePatientRect(init, dif);
 		    	drawVariableText(init, dif);
 		    	dataInputMatrix(init);
