@@ -343,6 +343,7 @@ function drawSimilarityCircle(){
 					x+xDif*j+xDif/2, y+height-yDif*i, 
 					treeDif.xDif/8*(1-obj[j]), 'rgb(53,158,131)', 
 					nameList[j]+'And'+nameList[j+i]+' similarityCircle real circleOrder'+i+'-'+j);
+			if(nameList[j] == nameList[j+i]) circle.attr('hidden','hidden');
 
 			if(i == 0){
 				circle.attr({
@@ -755,7 +756,7 @@ function init(){
 	
 	var phaseGraphRoot = svg.append('rect').attr({
 		x : padding + 30,
-		y : 5,
+		y : 2,
 		width : graphW,
 		height : 12,
 		fill : 'none',
@@ -839,7 +840,32 @@ function drawPersonGraph(array, index){
 	var topLine = $('.SMI').attr('y1')*1;
 	var middleLine = $('.MCI').attr('y1');
 	var bottomLine = $('.AD').attr('y1')*1;
-
+	
+	drawRect(gTag, 
+			x+dif.xDif*(index), topLine, 
+			rectWidth, bottomLine-topLine, 
+			'rgba(82,86,97,1)', 'phaseBackgroundRect', '', 100)
+			.on('mouseover',function(){
+				var parent = $(this).parent().attr('id');
+				parent = parent.substring(0, parent.length-('NameGraph').length);
+				treeNodeHoverFunction(parent, parent, $('.'+parent+'And'+parent), 
+						'Hover','rgba(255,165,0,0.2)');
+				guideCircleColorChange($('.'+parent+'And'+parent).attr('class').split(' ')[3]);
+				$(this).parent().find('.phase').attr('stroke','rgba(255,165,0,1)');
+				var guideHeight = $('.'+parent+'.smallRect.order0').parent().find('rect').attr('height')*1;
+				var guideX = $('.'+parent+'.smallRect.order0').parent().find('rect').attr('x')*1;
+				var guideY = $('.'+parent+'.smallRect.order0').parent().find('rect').attr('y')*1;
+				drawRect(init.svg, 
+						guideX, guideY, 
+						rectWidth, (guideHeight+1.8)*questions.length, 
+						'none', 'Hover', '').attr('stroke','orange');
+			}).on('mouseout',function(){
+				$('.Hover').remove();
+				d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
+				d3.selectAll('.real').attr('fill','rgb(53,158,131)');
+				$(this).parent().find('.phase').attr('stroke','rgba(255,255,255,0.85)');
+			});
+	
 	drawLine(gTag, 
 			x+dif.xDif*(index), topLine, 
 			x+dif.xDif*(index), bottomLine, 
