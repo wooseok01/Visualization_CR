@@ -20,6 +20,7 @@
       <option value="ksfList">KSF-GDS</option>
       <option value="kmmseList">K-MMSE</option>
     </select>
+    <input type="button" value="compare" class="btn-primary" id="compareButton" toggle="no">
   </div>
   
   <div id="matrixArea">

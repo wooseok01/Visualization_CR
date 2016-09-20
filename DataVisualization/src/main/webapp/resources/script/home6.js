@@ -983,7 +983,7 @@ function makePatientRect(init, dif){
 						x+dif.xDif*i, y+dif.yDif*j, 
 //						dif.xDif - 3.5, dif.yDif - 1.8, 'rgba(215,235,146,1)', 
 						dif.xDif - 3.5, dif.yDif - 1.8, color+'1)', 
-						personList[i].first.id+' rectangle '+questions[j], ''); 
+						personList[i].first.id+' rectangle '+questions[j]+' compareOk', ''); 
 			}else{
 				rect = drawRect(gTag,
 						x+dif.xDif*i, y+dif.yDif*j, 
@@ -1010,7 +1010,7 @@ function makePatientRect(init, dif){
 						$(this).parent().find('.rectangle').attr('y'), 
 						rectWidth, dif.yDif*questions.length, 
 						'none', 'rectHoverVerticalGuide', '').attr('stroke','orange');
-				
+				$(this).parent().find('.meaningful').attr('fill','orange');
 				var thisClass = $(this).attr('class');
 				var qName = thisClass.split(' ')[2];
 				$('text.'+qName).attr('fill','orange');
@@ -1043,10 +1043,26 @@ function makePatientRect(init, dif){
 				var qName = thisClass.split(' ')[2];
 				$('text.'+qName).attr('fill','rgba(197,193,169,1)');
 				
+				$(this).parent().find('.meaningful').attr('fill','rgba(54,163,135,1)');
 				$('.Hover').remove();
 				$('.rectHoverVerticalGuide').remove();
 				$('.rectHoverParallelGuide').remove();
-			});
+			}).on('click', function(){
+//				d3.selectAll('.compareOk').attr('fill','rgba(221,214,197,0.5)');
+//				d3.selectAll('.compareSmallCell').attr('fill','rgba(54,163,135,0.5)');
+				var parent = $(this).parent()
+				if((parent.attr('toggle') == null || parent.attr('toggle') == 'no') &&
+						$('#compareButton').val() == 'reset'){
+					parent.find('.compareOk').attr('fill','rgba(221,214,197,1)');
+					parent.find('.compareSmallCell').attr('fill','rgba(54,163,135,1)');
+					parent.attr('toggle','yes');
+				}else if((parent.attr('toggle') != null || parent.attr('toggle') == 'yes') &&
+						$('#compareButton').val() == 'reset'){
+					parent.find('.compareOk').attr('fill','rgba(221,214,197,0.5)');
+					parent.find('.compareSmallCell').attr('fill','rgba(54,163,135,0.5)');
+					parent.attr('toggle','no');
+				}
+			});;
 		}
 		drawPatientRectGuideLine(gTag, init, i, rect);
 	}
@@ -1156,29 +1172,53 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 		var y = rect.attr('y')*1;
 		var width = rect.attr('width')*1;
 		var height = rect.attr('height')*1;
+		var phasePattern = [];
+		var meaningful = [];
+//		console.log(person.length);
+		for(var j=0; j<5; j++){
+//			console.log(person[orderList[j]]['dx2']);
+//			console.log(person[orderList[j]]);
+			if(person[orderList[j]] != undefined){
+				switch(person[orderList[j]].dx2){
+				case 'SMI or Healthy subject' :  
+				case 'SMI' : 
+					phasePattern.push(3);
+					break;
+				case 'MCI' : 
+				case 'VCI' : 
+					phasePattern.push(2);
+					break;
+				case 'AD' : 
+				case 'SVD' : 
+					phasePattern.push(1);
+					break;
+				}
+			}
+		}
+		
+//		console.log(meaningful);
 		
 		for(var j=0; j<orderList.length; j++){
 			if(person[orderList[j]] != null){
+				var originalValue = person[orderList[j]][questions[i]];
 				if(person[orderList[j]][questions[i]] != 9 && 
 						person[orderList[j]][questions[i]] != 'NA'){
 					var value = person[orderList[j]][questions[i]];
 					
 					value = changeValueToYPos(questions[i], value, height)
 					var rect;
-					
+
 					if(value != 0){
 						if(i<list.length && questions[i] == list[i]){
 							
 							rect = drawRect(gTag, 
 									x + width/5*j, y+(height - value), 
 									width/5, value, 
-//									'rgba(53,158,131,1)', 'smallRect order'+i, '');	
-									color[0]+'1)', person[orderList[j]].id+' smallRect '+questions[i]+' order'+i, '');
+									color[0]+'1)', person[orderList[j]].id+' smallRect '+questions[i]+' order'+i+' compareSmallCell', '');
 						}else{
 							rect = drawRect(gTag, 
 									x + width/5*j, y+(height - value), 
-									width/5, value, 
-//									'rgba(53,158,131,1)', 'smallRect order'+i, '');	
+									width/5, value, 	
 									color[0]+'0.5)', person[orderList[j]].id+' smallRect '+questions[i]+' order'+i, '');
 						}
 						
@@ -1186,7 +1226,6 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 						rect = drawRect(gTag, 
 								x + width/5*j, y+(height - value), 
 								width/5, value, 
-//								'rgba(215,235,146,1)', 'smallRect order'+i, '');
 								'rgba(49,58,66,1)', person[orderList[j]].id+' smallRect '+questions[i]+' order'+i, '');
 					}
 				}else if(person[orderList[j]][questions[i]] != 9 || 
@@ -1194,9 +1233,12 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 					rect = drawRect(gTag, 
 							x+width/5*j, y, 
 							width/5, height, 
-//							'rgba(49,58,66,1)', 'smallRect order'+i, '');
 							'rgba(49,58,66,1)', person[orderList[j]].id+' smallRect '+questions[i]+' order'+i, '');
 				}
+				meaningful.push({
+					value : originalValue,
+					rect : rect
+				});
 			}else{
 				rect = drawRect(gTag, 
 						x+width/5*j, y, 
@@ -1204,7 +1246,20 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 //						'rgba(49,58,66,1)', 'smallRect order'+i, '');
 						'rgba(49,58,66,1)', person[orderList[0]].id+' smallRect '+questions[i]+' order'+i, '');
 			}
-			rect.on('mouseover', function(){
+			
+		}
+		
+		if(findMeaningfulVariable(meaningful,phasePattern)){
+			for(var j=0; j<meaningful.length; j++){
+				var meanClass = meaningful[j].rect.attr('class');
+				meaningful[j].rect.attr('class',meanClass+' meaningful');
+			}
+//			console.log('im in!');
+		}
+		
+		
+		for(var j=0; j<meaningful.length; j++){
+			meaningful[j].rect.on('mouseover', function(){
 				var objId = $(this).parent().attr('id');
 				var id = objId.split(' ')[0];
 				
@@ -1246,6 +1301,8 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 					split = secondClass.split(' ');
 					guideCircleColorChange(split[split.length-1]);
 				}
+				
+				$(this).parent().find('.meaningful').attr('fill','orange');
 
 			}).on('mouseout', function(){
 				d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
@@ -1260,12 +1317,87 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 				thisOrder = thisOrder.substring('order'.length, thisOrder.length)*1;
 				$('#parallelGuideLine'+thisOrder).find('text').attr('fill','rgba(197,193,169,1)');
 				
+				$(this).parent().find('.meaningful').attr('fill','rgba(54,163,135,1)');
 				$('.rectHoverVerticalGuide').remove();
 				$('.rectHoverParallelGuide').remove();
 				$('.Hover').remove();
+			}).on('click', function(){
+//				d3.selectAll('.compareOk').attr('fill','rgba(221,214,197,0.5)');
+//				d3.selectAll('.compareSmallCell').attr('fill','rgba(54,163,135,0.5)');
+				var parent = $(this).parent()
+				if((parent.attr('toggle') == null || parent.attr('toggle') == 'no') &&
+						$('#compareButton').val() == 'reset'){
+					parent.find('.compareOk').attr('fill','rgba(221,214,197,1)');
+					parent.find('.compareSmallCell').attr('fill','rgba(54,163,135,1)');
+					parent.attr('toggle','yes');
+				}else if((parent.attr('toggle') != null || parent.attr('toggle') == 'yes') &&
+						$('#compareButton').val() == 'reset'){
+					parent.find('.compareOk').attr('fill','rgba(221,214,197,0.5)');
+					parent.find('.compareSmallCell').attr('fill','rgba(54,163,135,0.5)');
+					parent.attr('toggle','no');
+				}
 			});
 		}
+		
+		meaningful = [];
+		
+		
+		
 	}
+}
+
+
+function findMeaningfulVariable(meaningful,phasePattern){
+	var one = [];
+	var two = [];
+	var three = [];
+	var plag1 = true;
+	var plag2 = true;
+	var plag3 = true;
+	
+	for(var i=0; i<meaningful.length; i++){
+		if(meaningful[i].value == 'NA' || meaningful[i].value == '9') {
+			return false;
+		}
+	}
+	
+	for(var i=0; i<phasePattern.length; i++){
+		switch(phasePattern[i]){
+			case 1 : one.push(i); break;
+			case 2 : two.push(i); break;
+			case 3: three.push(i); break;
+		}
+	}
+	
+	for(var i=0; i<one.length; i++){
+		if(meaningful[one[i]].value != meaningful[one[0]].value) {
+			plag1=false; break;		
+		}
+	}
+	
+	for(var i=0; i<two.length; i++){
+		if(meaningful[two[i]].value != meaningful[two[0]].value) {
+			plag1=false; break;		
+		}
+	}
+	
+	for(var i=0; i<three.length; i++){
+		if(meaningful[three[i]].value != meaningful[three[0]].value) {
+			plag1=false; break;		
+		}
+	}
+	
+	if(plag1&&plag2&&plag3){
+		if(one.length != 0 && two.length !=0){
+			if(meaningful[one[0]].value == meaningful[two[0]].value) plag1=false;
+		}else if(one.length != 0 && three.length !=0){
+			if(meaningful[one[0]].value == meaningful[three[0]].value) plag1=false;
+		}else if(two.length != 0 && three.length !=0){
+			if(meaningful[two[0]].value == meaningful[three[0]].value) plag1=false;
+		}
+	}
+	
+	return (plag1&&plag2&&plag3);
 }
 
 function changeValueToYPos(question, value, height){
@@ -1321,9 +1453,25 @@ $(document).ready(function(){
 		    	$('#matrixArea > svg').fadeIn('slow',function(){
 		    		
 		    	});
+		    	$('#compareButton').attr('toggle','no');
+		    	$('#compareButton').val('compare');
 		});
 	});
 	
+	$('#compareButton').click(function(){
+		if($(this).attr('toggle') == 'no'){
+			$(this).val('reset');
+			$(this).attr('toggle','yes');
+			d3.selectAll('.compareOk').attr('fill','rgba(221,214,197,0.5)');
+			d3.selectAll('.compareSmallCell').attr('fill','rgba(54,163,135,0.5)');
+		}else{
+			$(this).val('compare');
+			$(this).attr('toggle','no');
+			d3.selectAll('.compareOk').attr('fill','rgba(221,214,197,1)');
+			d3.selectAll('.compareSmallCell').attr('fill','rgba(54,163,135,1)');
+		}
+		
+	});
 	
 });
-
+	
