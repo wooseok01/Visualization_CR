@@ -14,6 +14,12 @@ var minusYxis;
 var selected = null;
 var phaseDif;
 var rectWidth;
+var nodeColor = 'rgb(53,158,131)';
+var nameGraphColor = 'rgba(197,193,169,1)';
+var smallRectColor = 'rgba(54,163,135,1)';
+var nullValueColor = 'rgba(49,58,66,1)';
+var compareOkColor = 'rgba(221,214,197,1)';
+var compareNoColor = 'rgba(221,214,197,0.5)';
 
 //tree와 matrix연동 전에 임시 개발을 위한 변수
 var treePerson = [];
@@ -252,7 +258,7 @@ function treeInit(){
 			'guideDescription', '');
 	drawRect(svg, 
 			graphW-padding*3 + 10-2.5, padding*3, 
-			5, 10, 'rgba(49,58,66,1)', 
+			5, 10, nullValueColor, 
 			'guideDescription', '');
 	
 	drawCircle(svg, 
@@ -341,7 +347,7 @@ function drawSimilarityCircle(){
 		for(var j=0; j<obj.length; j++){
 			var circle = drawCircle(treeInit.svg, 
 					x+xDif*j+xDif/2, y+height-yDif*i, 
-					treeDif.xDif/8*(1-obj[j]), 'rgb(53,158,131)', 
+					treeDif.xDif/8*(1-obj[j]), nodeColor, 
 					nameList[j]+'And'+nameList[j+i]+' similarityCircle real circleOrder'+i+'-'+j);
 			if(nameList[j] == nameList[j+i]) circle.attr('hidden','hidden');
 
@@ -575,12 +581,12 @@ function divideCluster(similarityArr){
 		var split = className.split('And');
 		var first = split[0];
 		var second = (split[1].split(' '))[0];
-		
-		$('#'+first+'NameGraph').find('.phase').attr('stroke','rgba(197,193,169,1)');
-		$('#'+second+'NameGraph').find('.phase').attr('stroke','rgba(197,193,169,1)');
+		//nameGraphColor
+		$('#'+first+'NameGraph').find('.phase').attr('stroke',nameGraphColor);
+		$('#'+second+'NameGraph').find('.phase').attr('stroke',nameGraphColor);
 		
 		d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
-		d3.selectAll('.real').attr('fill','rgb(53,158,131)');
+		d3.selectAll('.real').attr('fill',nodeColor);
 		
 		$('.Hover').remove();
 	}).on('click', function(){
@@ -862,7 +868,7 @@ function drawPersonGraph(array, index){
 			}).on('mouseout',function(){
 				$('.Hover').remove();
 				d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
-				d3.selectAll('.real').attr('fill','rgb(53,158,131)');
+				d3.selectAll('.real').attr('fill',nodeColor);
 				$(this).parent().find('.phase').attr('stroke','rgba(255,255,255,0.85)');
 			});
 	
@@ -955,7 +961,7 @@ function makePatientRect(init, dif){
 	var height = $('#matrixSvg').attr('height')*1;
 	var x = $('#matrixSvg').attr('x')*1;
 	var y = $('#matrixSvg').attr('y')*1;
-	var color = 'rgba(221,214,197,';
+	
 	var list = [];
 	switch(selected){
 		case 'kmmseList' : break;
@@ -982,13 +988,13 @@ function makePatientRect(init, dif){
 				rect = drawRect(gTag,
 						x+dif.xDif*i, y+dif.yDif*j, 
 //						dif.xDif - 3.5, dif.yDif - 1.8, 'rgba(215,235,146,1)', 
-						dif.xDif - 3.5, dif.yDif - 1.8, color+'1)', 
+						dif.xDif - 3.5, dif.yDif - 1.8, compareOkColor, 
 						personList[i].first.id+' rectangle '+questions[j]+' compareOk', ''); 
 			}else{
 				rect = drawRect(gTag,
 						x+dif.xDif*i, y+dif.yDif*j, 
 //						dif.xDif - 3.5, dif.yDif - 1.8, 'rgba(215,235,146,1)', 
-						dif.xDif - 3.5, dif.yDif - 1.8, color+'0.5)',
+						dif.xDif - 3.5, dif.yDif - 1.8, compareNoColor,
 						personList[i].first.id+' rectangle '+questions[j], ''); 
 			}
 			
@@ -1034,7 +1040,7 @@ function makePatientRect(init, dif){
 			}).on('mouseout', function(){
 //				d3.selectAll('.similarityCircle').attr('fill','rgb(53,158,131)');
 				d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
-				d3.selectAll('.real').attr('fill','rgb(53,158,131)');
+				d3.selectAll('.real').attr('fill',nodeColor);
 				var objId = $(this).parent().attr('id');
 				var id = objId.split(' ')[0];
 				
@@ -1043,7 +1049,7 @@ function makePatientRect(init, dif){
 				var qName = thisClass.split(' ')[2];
 				$('text.'+qName).attr('fill','rgba(197,193,169,1)');
 				
-				$(this).parent().find('.meaningful').attr('fill','rgba(54,163,135,1)');
+				$(this).parent().find('.meaningful').attr('fill',smallRectColor);
 				$('.Hover').remove();
 				$('.rectHoverVerticalGuide').remove();
 				$('.rectHoverParallelGuide').remove();
@@ -1054,7 +1060,7 @@ function makePatientRect(init, dif){
 				if((parent.attr('toggle') == null || parent.attr('toggle') == 'no') &&
 						$('#compareButton').val() == 'reset'){
 					parent.find('.compareOk').attr('fill','rgba(221,214,197,1)');
-					parent.find('.compareSmallCell').attr('fill','rgba(54,163,135,1)');
+					parent.find('.compareSmallCell').attr('fill',smallRectColor);
 					parent.attr('toggle','yes');
 				}else if((parent.attr('toggle') != null || parent.attr('toggle') == 'yes') &&
 						$('#compareButton').val() == 'reset'){
@@ -1226,14 +1232,14 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 						rect = drawRect(gTag, 
 								x + width/5*j, y+(height - value), 
 								width/5, value, 
-								'rgba(49,58,66,1)', person[orderList[j]].id+' smallRect '+questions[i]+' order'+i, '');
+								nullValueColor, person[orderList[j]].id+' smallRect '+questions[i]+' order'+i, '');
 					}
 				}else if(person[orderList[j]][questions[i]] != 9 || 
 						person[orderList[j]][questions[i]] != 'NA'){
 					rect = drawRect(gTag, 
 							x+width/5*j, y, 
 							width/5, height, 
-							'rgba(49,58,66,1)', person[orderList[j]].id+' smallRect '+questions[i]+' order'+i, '');
+							nullValueColor, person[orderList[j]].id+' smallRect '+questions[i]+' order'+i+' nullValue', '');
 				}
 				meaningful.push({
 					value : originalValue,
@@ -1244,7 +1250,7 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 						x+width/5*j, y, 
 						width/5, height, 
 //						'rgba(49,58,66,1)', 'smallRect order'+i, '');
-						'rgba(49,58,66,1)', person[orderList[0]].id+' smallRect '+questions[i]+' order'+i, '');
+						nullValueColor, person[orderList[0]].id+' smallRect '+questions[i]+' order'+i+' nullValue', '');
 			}
 			
 		}
@@ -1306,18 +1312,18 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 
 			}).on('mouseout', function(){
 				d3.selectAll('.similarityCircle').attr('fill','rgba(53,158,131,0)');
-				d3.selectAll('.real').attr('fill','rgb(53,158,131)');
+				d3.selectAll('.real').attr('fill',nodeColor);
 				var objId = $(this).parent().attr('id');
 				var id = objId.split(' ')[0];
 				
-				$('#'+id+'NameGraph').find('.phase').attr('stroke','rgba(255,255,255,0.85)');
+				$('#'+id+'NameGraph').find('.phase').attr('stroke',nameGraphColor);
 				
 				var thisClass = $(this).attr('class');
 				var thisOrder = thisClass.split(' ')[3];
 				thisOrder = thisOrder.substring('order'.length, thisOrder.length)*1;
 				$('#parallelGuideLine'+thisOrder).find('text').attr('fill','rgba(197,193,169,1)');
 				
-				$(this).parent().find('.meaningful').attr('fill','rgba(54,163,135,1)');
+				$(this).parent().find('.meaningful').attr('fill',smallRectColor);
 				$('.rectHoverVerticalGuide').remove();
 				$('.rectHoverParallelGuide').remove();
 				$('.Hover').remove();
@@ -1328,7 +1334,7 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 				if((parent.attr('toggle') == null || parent.attr('toggle') == 'no') &&
 						$('#compareButton').val() == 'reset'){
 					parent.find('.compareOk').attr('fill','rgba(221,214,197,1)');
-					parent.find('.compareSmallCell').attr('fill','rgba(54,163,135,1)');
+					parent.find('.compareSmallCell').attr('fill',smallRectColor);
 					parent.attr('toggle','yes');
 				}else if((parent.attr('toggle') != null || parent.attr('toggle') == 'yes') &&
 						$('#compareButton').val() == 'reset'){
@@ -1468,9 +1474,87 @@ $(document).ready(function(){
 			$(this).val('compare');
 			$(this).attr('toggle','no');
 			d3.selectAll('.compareOk').attr('fill','rgba(221,214,197,1)');
-			d3.selectAll('.compareSmallCell').attr('fill','rgba(54,163,135,1)');
+			d3.selectAll('.compareSmallCell').attr('fill',smallRectColor);
 		}
 		
+	});
+	
+	$('#changeColor').click(function(){
+		if($(this).attr('toggle') == 'no'){
+			$(this).val('click!');
+			$(this).attr('toggle','yes');
+			
+			d3.selectAll('circle, rect, line, text').attr('class', function(){
+				return d3.select(this).attr('class')+' active';
+			});
+			
+			$('.active').click(function(){
+				
+				var thisClass = $(this).attr('class');
+				var color,val;
+				console.log(thisClass);
+				if(thisClass.search('similarityCircle real') != -1 || thisClass.search('similarityCircle') != -1){
+					//원인 경우
+					color = $(this).attr('fill');
+					val = prompt('change color!',color);
+					d3.selectAll('.similarityCircle real').attr('fill',val);
+					nodeColor = val;
+				}else if(thisClass.search('phase') != -1){
+					//네임 그래프
+					color = $(this).attr('stroke');
+					val = prompt('change color!',color);
+					d3.selectAll('.phase').attr('stroke',val);
+					nameGraphColor = val;
+				}else if(thisClass.search('smallRect') != -1){
+					//바 그래프 색상
+					if(thisClass.search('nullValue') == -1){
+						//값이 0 이상인 바 그래프
+						color = $(this).attr('fill');
+						val = prompt('change color!',color);
+						d3.selectAll('.smallRect').attr('fill',val);
+						d3.selectAll('.nullValue').attr('fill',nullValueColor);
+						smallRectColor = 'rgba(54,163,135,1)';						
+					}else if(thisClass.search('nullVlaue') != -1){
+						//값이 null인 바 그래프
+						color = $(this).attr('fill');
+						val = prompt('change color!',color);
+						d3.selectAll('.nullValue').attr('fill',val);
+						nullValueColor = val;
+					}
+				}else if(thisClass.search('rectangle') != -1){
+					//배경 사각형! matrix에서 바탕을 나타내는 사각형
+					if(thisClass.search('compareOk') != -1){
+						//opacity가 100%인 배경 사각형
+						color = $(this).attr('fill');
+						val = prompt('change color!',color);
+						d3.selectAll('.compareOk').attr('fill',val);
+						compareOkColor = val;
+					}else{
+						//opacity가 50%인 배경 사격형
+						color = $(this).attr('fill');
+						val = prompt('change color!',color);
+						d3.selectAll('.rectangle').attr('fill',val);
+						d3.selectAll('.compareOk').attr('fill',compareOkColor);
+						compareNoColor = val;
+					}
+					
+				}
+				
+				
+			})
+			
+		}else if($(this).attr('toggle') == 'yes'){
+			$(this).val('changeColor');
+			$(this).attr('toggle','no');
+			
+			$('.active').click(null);
+			
+			d3.selectAll('circle, rect, line, text').attr('class', function(){
+				var thisClass = d3.select(this).attr('class');
+				return thisClass.substring(0, thisClass.length - (' active').length);
+			});
+			
+		}
 	});
 	
 });

@@ -21,6 +21,7 @@
       <option value="kmmseList">K-MMSE</option>
     </select>
     <input type="button" value="compare" class="btn-primary" id="compareButton" toggle="no">
+    <input type="button" value="changeColor" class="btn-primary" id="changeColor" toggle="no">
   </div>
   
   <div id="matrixArea">

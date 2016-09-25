@@ -61,6 +61,15 @@ h1{
     font-size: 12px;
 }
 
+#changeColor{
+    position : absolute;
+    margin-left : 280px;
+    margin-top : 20px;
+    width : 100px;
+    height : 30px;
+    font-size : 12px;
+}
+
 #treeArea > svg{
     overflow: visible;
     margin-top : 5px;
