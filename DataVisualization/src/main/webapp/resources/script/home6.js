@@ -42,156 +42,324 @@ d3.selection.prototype.moveToBack = function() {
 	});
 };
 
-async.waterfall([
-	function(cb){
-		ajaxCall('./getSimilarityPerson', init, dif, function(data){
-			cb(null, data);
-		});
-		
-	}, function(data, cb){
-		// draw tree
-		//basic triangle
-		treePerson = data;
-		drawBasicTriangle(treeInit);
-		cb(null);
-	}, function(cb){
-		ajaxCall('./getSimilarityColumn', init, dif, function(data){
-			cb(null,data);
-		});
-	},function(data, cb){
-		treeNameList = data;
-		nameList = data;
-//		drawSimilarityCircle();
-		cb(null);
-	}, function(cb){
-    	//get all patientData
-    	ajaxCall('./getCredosData3', init, dif, function(data){
-        	//get all questionsData
-    		ajaxCall('./getCredosQuestions', init, dif, function(qList){
-    			var overallList = [];
-    			var kmmseList = [];
-    			var kdsqlList = ['q_kdsq_1','q_kdsq_3','q_kdsq_4','q_kdsq_5','q_kdsq_11','q_kdsq_12'];
-    			var siadlList = ['a_siadl_c1','a_siadl_c2','a_siadl_c8','a_siadl_c13','a_siadl_c14','a_siadl_c15'];
-    			var npiList = [];
-    			var cdrList = [];
-    			var ksfList = ['b_ksf_gds_9','b_ksf_gds_14'];
-    			
-    			overallList = overallList.concat(kdsqlList);
-    			overallList = overallList.concat(siadlList);
-    			overallList = overallList.concat(ksfList);
-    			 
-    			console.log(overallList);
-    			
-    			for(var i=0; i<qList.length; i++){
-    				var listObj = qList[i];
-    				if(listObj.search('km_') != -1){
-    					if(listObj.search('pent') == -1 && listObj.search('total') == -1){
-    						kmmseList.push(listObj);
-    					}
-    				}else if(listObj.search('q_kdsq') != -1){
-    					if(listObj.search('q_kdsq_1') != -1 || listObj.search('q_kdsq_3') != -1 || 
-        					listObj.search('q_kdsq_4') != -1 || listObj.search('q_kdsq_5') != -1 ||
-    						listObj.search('q_kdsq_11') != -1 || listObj.search('q_kdsq_12') != -1){
-    						continue;
-    					}
-    					kdsqlList.push(listObj);
-    				}else if(listObj.search('a_siadl') != -1){
-    					if(listObj.search('a_siadl_p') == -1){
-    						if(listObj.search('a_siadl_c1') != -1 || listObj.search('a_siadl_c2') != -1 || 
-        						listObj.search('a_siadl_c8') != -1 || listObj.search('a_siadl_c13') != -1 ||
-    							listObj.search('a_siadl_c14') != -1 || listObj.search('a_siadl_c15') != -1){
-        						continue;
-        					}else{
-        						siadlList.push(listObj);
-        					}
-    					}
-    				}else if(listObj.search('b_cga_npi') != -1){npiList.push(listObj);}
-    				else if(listObj.search('g_cdr') != -1){cdrList.push(listObj);}
-    				else if(listObj.search('b_ksf_gds') != -1){
-    					if(listObj.search('b_ksf_gds_9') != -1 || listObj.search('b_ksf_gds_14') != -1){
-        						continue;
-    					}else{
-    						ksfList.push(listObj);
-    					}
-    				}
-    			}
-    			
-    			questionsList = {
-    				kmmseList : kmmseList,
-    				kdsqlList : kdsqlList,
-    				siadlList : siadlList,
-    				npiList : npiList,
-    				cdrList : cdrList,
-    				ksfList : ksfList,
-    				overallList : overallList
-    			};
-//    			console.log(siadlList);
-    			cb(null, data);
-    		});
-    	});
-    },function(data, cb){
-    	if(selected == null){
-    		selected = 'overallList';
-    		questions = questionsList[selected];
-    	}
-    	//make personList & nameList
-    	
-    	var name = null;
-    	var index = 0;
-    	data = credosDataFitSimilarity(data);
-    	for(var i=0; i<data.length; i++){
-    		if(i == 0){
-    			name = data[i].id;
-    			index++;
-    		}else if(i == data.length-1){personList.push(makeList(i-index, index+1, data));}
-    		else{
-    			if(name == data[i].id){
-    				index++;
-    			}else{
-    				var object = makeList(i-(index), index, data);
-    				personList.push(object);
-    				index = 0;
-    				index++;
-    				name = data[i].id;
-    			}
-    		}
-    	}
-    	cb(null);
-    }, function(cb){
-    	//draw basic template
-    	
-    	if(selected != 'kmmseList'){
-    		dif = {
-    	    	xDif : init.graphW/nameList.length,
-    	    	//yDif : init.graphH/questions.length
-    	    	yDif : init.graphH/(questionsList['kmmseList'].length-5)
-    	    }
-    	}else{
-    		dif = {
-    			xDif : init.graphW/nameList.length,
-    	    	yDif : init.graphH/questions.length
-    		}
-    	}
-    	
-    	
-    	makePatientRect(init, dif);
-    	drawVariableText(init, dif);
-    	drawPhaseGraph(init, dif);
-    	cb(null);
-    }, function(cb){
-    	//data input!
-    	dataInputMatrix(init);
-    	d3.selectAll('.verticalGuideLine').moveToFront();
-    	drawSimilarityCircle();
-    	cb(null,'done');
-    }],
-    function(err, result){
-		if(err != null){
-			console.log(err.message);
-		}else{
-			console.log(result);
-		}
+//처음 시작할때 모든 셋팅!
+firstSetting(function(){
+	console.log('done!');
 });
+
+function firstSetting(innerCallback){
+
+	async.waterfall([
+		function(cb){
+			ajaxCall('./getSimilarityPerson', init, dif, function(data){
+//				console.log('first');
+				cb(null, data);
+//				console.log(init);
+//				console.log(dif);
+			});
+			
+		}, function(data, cb){
+			// draw tree
+			//basic triangle
+			treePerson = data;
+			drawBasicTriangle(treeInit); //now here
+//			console.log('second');
+			cb(null);
+		}, function(cb){
+			ajaxCall('./getSimilarityColumn', init, dif, function(data){
+//				console.log('third');
+				cb(null,data);
+			});
+		},function(data, cb){
+			treeNameList = data;
+			nameList = data;
+//			drawSimilarityCircle();
+//			console.log('fourth');
+			cb(null);
+		}, function(cb){
+	    	//get all patientData
+	    	ajaxCall('./getCredosData3', init, dif, function(data){
+	        	//get all questionsData
+	    		ajaxCall('./getCredosQuestions', init, dif, function(qList){
+	    			var overallList = [];
+	    			var kmmseList = [];
+	    			var kdsqlList = ['q_kdsq_1','q_kdsq_3','q_kdsq_4','q_kdsq_5','q_kdsq_11','q_kdsq_12'];
+	    			var siadlList = ['a_siadl_c1','a_siadl_c2','a_siadl_c8','a_siadl_c13','a_siadl_c14','a_siadl_c15'];
+	    			var npiList = [];
+	    			var cdrList = [];
+	    			var ksfList = ['b_ksf_gds_9','b_ksf_gds_14'];
+	    			
+//	    			overallList = [];
+	    			overallList = overallList.concat(kdsqlList);
+	    			overallList = overallList.concat(siadlList);
+	    			overallList = overallList.concat(ksfList);
+	    			
+	    			for(var i=0; i<qList.length; i++){
+	    				var listObj = qList[i];
+	    				if(listObj.search('km_') != -1){
+	    					if(listObj.search('pent') == -1 && listObj.search('total') == -1){
+	    						kmmseList.push(listObj);
+	    					}
+	    				}else if(listObj.search('q_kdsq') != -1){
+	    					if(listObj.search('q_kdsq_1') != -1 || listObj.search('q_kdsq_3') != -1 || 
+	        					listObj.search('q_kdsq_4') != -1 || listObj.search('q_kdsq_5') != -1 ||
+	    						listObj.search('q_kdsq_11') != -1 || listObj.search('q_kdsq_12') != -1){
+	    						continue;
+	    					}
+	    					kdsqlList.push(listObj);
+	    				}else if(listObj.search('a_siadl') != -1){
+	    					if(listObj.search('a_siadl_p') == -1){
+	    						if(listObj.search('a_siadl_c1') != -1 || listObj.search('a_siadl_c2') != -1 || 
+	        						listObj.search('a_siadl_c8') != -1 || listObj.search('a_siadl_c13') != -1 ||
+	    							listObj.search('a_siadl_c14') != -1 || listObj.search('a_siadl_c15') != -1){
+	        						continue;
+	        					}else{
+	        						siadlList.push(listObj);
+	        					}
+	    					}
+	    				}else if(listObj.search('b_cga_npi') != -1){npiList.push(listObj);}
+	    				else if(listObj.search('g_cdr') != -1){cdrList.push(listObj);}
+	    				else if(listObj.search('b_ksf_gds') != -1){
+	    					if(listObj.search('b_ksf_gds_9') != -1 || listObj.search('b_ksf_gds_14') != -1){
+	        						continue;
+	    					}else{
+	    						ksfList.push(listObj);
+	    					}
+	    				}
+	    			}
+	    			
+	    			questionsList = {
+	    				kmmseList : kmmseList,
+	    				kdsqlList : kdsqlList,
+	    				siadlList : siadlList,
+	    				npiList : npiList,
+	    				cdrList : cdrList,
+	    				ksfList : ksfList,
+	    				overallList : overallList
+	    			};
+//	    			console.log('fifth');
+	    			cb(null, data);
+	    		});
+	    	});
+	    },function(data, cb){
+	    	if(selected == null){
+	    		selected = 'overallList';
+	    		questions = questionsList[selected];
+	    	}
+	    	//make personList & nameList
+	    	
+	    	var name = null;
+	    	var index = 0;
+	    	data = credosDataFitSimilarity(data);
+	    	personList = [];
+	    	for(var i=0; i<data.length; i++){
+	    		if(i == 0){
+	    			name = data[i].id;
+	    			index++;
+	    		}else if(i == data.length-1){personList.push(makeList(i-index, index+1, data));}
+	    		else{
+	    			if(name == data[i].id){
+	    				index++;
+	    			}else{
+	    				var object = makeList(i-(index), index, data);
+	    				personList.push(object);
+	    				index = 0;
+	    				index++;
+	    				name = data[i].id;
+	    			}
+	    		}
+	    	}
+//	    	console.log('seventh');
+	    	cb(null);
+	    }, function(cb){
+	    	//draw basic template
+			
+	    	if(selected != 'kmmseList'){
+	    		dif = {
+	    	    	xDif : init.graphW/nameList.length,
+	    	    	//yDif : init.graphH/questions.length
+	    	    	yDif : init.graphH/(questionsList['kmmseList'].length-5)
+	    	    }
+	    	}else{
+	    		dif = {
+	    			xDif : init.graphW/nameList.length,
+	    	    	yDif : init.graphH/questions.length
+	    		}
+	    	}
+	    	
+	    	makePatientRect(init, dif);
+	    	drawVariableText(init, dif);
+	    	drawPhaseGraph(init, dif);
+//	    	console.log('eighth');
+	    	cb(null);
+	    }, function(cb){
+	    	//data input!
+//	    	console.log('here!');
+	    	console.log(init);
+	    	dataInputMatrix(init);
+	    	console.log('들어옴??');
+	    	d3.selectAll('.verticalGuideLine').moveToFront();
+	    	drawSimilarityCircle();
+	    	cb(null,'done');
+	    }],
+	    function(err, result){
+			if(err != null){
+				console.log('error!!');
+				console.log(err.message);
+			}else{
+				innerCallback();
+			}
+	});
+}
+//
+//async.waterfall([
+//	function(cb){
+//		ajaxCall('./getSimilarityPerson', init, dif, function(data){
+//			cb(null, data);
+//		});
+//		
+//	}, function(data, cb){
+//		// draw tree
+//		//basic triangle
+//		treePerson = data;
+//		drawBasicTriangle(treeInit); //now here
+//		cb(null);
+//	}, function(cb){
+//		ajaxCall('./getSimilarityColumn', init, dif, function(data){
+//			cb(null,data);
+//		});
+//	},function(data, cb){
+//		treeNameList = data;
+//		nameList = data;
+////		drawSimilarityCircle();
+//		cb(null);
+//	}, function(cb){
+//    	//get all patientData
+//    	ajaxCall('./getCredosData3', init, dif, function(data){
+//        	//get all questionsData
+//    		ajaxCall('./getCredosQuestions', init, dif, function(qList){
+//    			var overallList = [];
+//    			var kmmseList = [];
+//    			var kdsqlList = ['q_kdsq_1','q_kdsq_3','q_kdsq_4','q_kdsq_5','q_kdsq_11','q_kdsq_12'];
+//    			var siadlList = ['a_siadl_c1','a_siadl_c2','a_siadl_c8','a_siadl_c13','a_siadl_c14','a_siadl_c15'];
+//    			var npiList = [];
+//    			var cdrList = [];
+//    			var ksfList = ['b_ksf_gds_9','b_ksf_gds_14'];
+//    			
+//    			overallList = overallList.concat(kdsqlList);
+//    			overallList = overallList.concat(siadlList);
+//    			overallList = overallList.concat(ksfList);
+//    			
+//    			for(var i=0; i<qList.length; i++){
+//    				var listObj = qList[i];
+//    				if(listObj.search('km_') != -1){
+//    					if(listObj.search('pent') == -1 && listObj.search('total') == -1){
+//    						kmmseList.push(listObj);
+//    					}
+//    				}else if(listObj.search('q_kdsq') != -1){
+//    					if(listObj.search('q_kdsq_1') != -1 || listObj.search('q_kdsq_3') != -1 || 
+//        					listObj.search('q_kdsq_4') != -1 || listObj.search('q_kdsq_5') != -1 ||
+//    						listObj.search('q_kdsq_11') != -1 || listObj.search('q_kdsq_12') != -1){
+//    						continue;
+//    					}
+//    					kdsqlList.push(listObj);
+//    				}else if(listObj.search('a_siadl') != -1){
+//    					if(listObj.search('a_siadl_p') == -1){
+//    						if(listObj.search('a_siadl_c1') != -1 || listObj.search('a_siadl_c2') != -1 || 
+//        						listObj.search('a_siadl_c8') != -1 || listObj.search('a_siadl_c13') != -1 ||
+//    							listObj.search('a_siadl_c14') != -1 || listObj.search('a_siadl_c15') != -1){
+//        						continue;
+//        					}else{
+//        						siadlList.push(listObj);
+//        					}
+//    					}
+//    				}else if(listObj.search('b_cga_npi') != -1){npiList.push(listObj);}
+//    				else if(listObj.search('g_cdr') != -1){cdrList.push(listObj);}
+//    				else if(listObj.search('b_ksf_gds') != -1){
+//    					if(listObj.search('b_ksf_gds_9') != -1 || listObj.search('b_ksf_gds_14') != -1){
+//        						continue;
+//    					}else{
+//    						ksfList.push(listObj);
+//    					}
+//    				}
+//    			}
+//    			
+//    			questionsList = {
+//    				kmmseList : kmmseList,
+//    				kdsqlList : kdsqlList,
+//    				siadlList : siadlList,
+//    				npiList : npiList,
+//    				cdrList : cdrList,
+//    				ksfList : ksfList,
+//    				overallList : overallList
+//    			};
+////    			console.log(siadlList);
+//    			cb(null, data);
+//    		});
+//    	});
+//    },function(data, cb){
+//    	if(selected == null){
+//    		selected = 'overallList';
+//    		questions = questionsList[selected];
+//    	}
+//    	//make personList & nameList
+//    	
+//    	var name = null;
+//    	var index = 0;
+//    	data = credosDataFitSimilarity(data);
+//    	for(var i=0; i<data.length; i++){
+//    		if(i == 0){
+//    			name = data[i].id;
+//    			index++;
+//    		}else if(i == data.length-1){personList.push(makeList(i-index, index+1, data));}
+//    		else{
+//    			if(name == data[i].id){
+//    				index++;
+//    			}else{
+//    				var object = makeList(i-(index), index, data);
+//    				personList.push(object);
+//    				index = 0;
+//    				index++;
+//    				name = data[i].id;
+//    			}
+//    		}
+//    	}
+//    	cb(null);
+//    }, function(cb){
+//    	//draw basic template
+//    	
+//    	if(selected != 'kmmseList'){
+//    		dif = {
+//    	    	xDif : init.graphW/nameList.length,
+//    	    	//yDif : init.graphH/questions.length
+//    	    	yDif : init.graphH/(questionsList['kmmseList'].length-5)
+//    	    }
+//    	}else{
+//    		dif = {
+//    			xDif : init.graphW/nameList.length,
+//    	    	yDif : init.graphH/questions.length
+//    		}
+//    	}
+//    	
+//    	
+//    	makePatientRect(init, dif);
+//    	drawVariableText(init, dif);
+//    	drawPhaseGraph(init, dif);
+//    	cb(null);
+//    }, function(cb){
+//    	//data input!
+//    	dataInputMatrix(init);
+//    	d3.selectAll('.verticalGuideLine').moveToFront();
+//    	drawSimilarityCircle();
+//    	cb(null,'done');
+//    }],
+//    function(err, result){
+//		if(err != null){
+//			console.log(err.message);
+//		}else{
+//			console.log(result);
+//		}
+//});
 
 function credosDataFitSimilarity(data){
 	var result=[];
@@ -302,26 +470,27 @@ function drawBasicTriangle(treeInit){
 	var width = treeInit.treeRoot.attr('width')*1;
 	
 	var middleX = (x + (x+width))/2;
-
+	
 	plusAxis = (y-(y+height))/(middleX-x);
 	plusYxis = y+height - plusAxis*x;
 	
 	minusAxis = (y+height-y)/(x+width-middleX);
 	minusYxis = y - minusAxis*(middleX);
-	
+//	console.log(treeInit.svg);
 	drawLine(treeInit.svg, 
 			x, y+height, 
 			x+width, y+height, 
 			0.5, 'rgba(208,208,212,0.8)', 'basicTriangle');
+//	console.log(temp.attr('x1'));
 	var lineData = [];
 	lineData.push({x : x, y : y+height});
 	lineData.push({x : middleX, y : y});
 	lineData.push({x : x+width, y : y+height});
-	
-	drawGraph(treeInit.svg, lineData, '', 'rgba(208,208,212,0.8)', 
+	console.log(treePerson.length);
+	var temp = drawGraph(treeInit.svg, lineData, '', 'rgba(208,208,212,0.8)', 
 //			0.5, 'linear', 'rgba(225,245,156,0.15)');
 			0.5, 'linear', 'rgba(35,30,45,1)');
-	
+	console.log(temp);
 	treeDif = {
 			xDif : width/treePerson.length,
 			yDif : height/treePerson.length
@@ -1077,8 +1246,9 @@ function makePatientRect(init, dif){
 function drawVariableText(init, dif){
 	var x = init.matrixRoot.attr('x')*1;
 	var y = init.matrixRoot.attr('y')*1;
-	
+	console.log(questions.length);
 	for(var i=0; i<questions.length; i++){
+		console.log('init.svg='+init.svg);
 		var gTag = init.svg.append('g').attr({
 			id : 'parallelGuideLine'+i
 		});
@@ -1142,7 +1312,6 @@ function drawPatientRectGuideLine(gTag, init, order, rect){
 function dataInputMatrix(init){
 	var orderList = ['first', 'second', 'third', 
 	                 'fourth', 'fifth'];
-
 	for(var i=0; i<personList.length; i++){
 		var gTag = d3.select('.verticalOrder'+i);
 		drawSmallVarGraph(init, gTag, personList[i], orderList, i);
@@ -1173,7 +1342,7 @@ function drawSmallVarGraph(init, gTag, person, orderList, order){
 	}
 	for(var i=0; i<questions.length; i++){
 		var rect = gTag.select('.'+questions[i]);
-
+//		console.log(rect);
 		var x = rect.attr('x')*1;
 		var y = rect.attr('y')*1;
 		var width = rect.attr('width')*1;
@@ -1425,6 +1594,17 @@ $(document).ready(function(){
 	$('#buttonList').change(function(){
 		var thisObj = $(this).find(':selected');
 		var rect = $('#matrixArea > svg > matrixSvg');
+		
+		var dendro = $('#dendroSelect option:selected').val();
+//		if(dendro == 'testDendro'){
+//			$('#treeArea > svg').fadeOut('slow', function(){
+//				drawBasicTriangle(treeInit);
+//				//now here!
+//			});
+//		}else{
+//			
+//		}
+		
 		$('#matrixArea > svg').fadeOut('slow',function(){
 			$('#matrixArea > svg').empty();
 			selected = thisObj.val();
@@ -1462,6 +1642,9 @@ $(document).ready(function(){
 		    	$('#compareButton').attr('toggle','no');
 		    	$('#compareButton').val('compare');
 		});
+		
+		
+		
 	});
 	
 	$('#compareButton').click(function(){
@@ -1492,7 +1675,7 @@ $(document).ready(function(){
 				
 				var thisClass = $(this).attr('class');
 				var color,val;
-				console.log(thisClass);
+
 				if(thisClass.search('similarityCircle real') != -1 || thisClass.search('similarityCircle') != -1){
 					//원인 경우
 					color = $(this).attr('fill');
@@ -1537,11 +1720,8 @@ $(document).ready(function(){
 						d3.selectAll('.compareOk').attr('fill',compareOkColor);
 						compareNoColor = val;
 					}
-					
 				}
-				
-				
-			})
+			});
 			
 		}else if($(this).attr('toggle') == 'yes'){
 			$(this).val('changeColor');
@@ -1557,5 +1737,53 @@ $(document).ready(function(){
 		}
 	});
 	
+	$('#dendroSelect').change(function(){
+		var dendro = $(this).val();
+		if(dendro == 'wholeDendro'){
+			async.waterfall([
+			    function(cb){
+			    	$('#treeArea > svg').fadeOut('slow', function(){
+						$(this).empty();
+						var treeRoot = treeInit.svg.append('rect').attr({
+							x : treeInit.padding + 30,
+							y : 10,
+							width : treeInit.graphW,
+							height : treeInit.graphH+5,
+							fill : 'none',
+							stroke : 'none',
+							id : 'treeSvg'
+						});
+						
+						treeInit.treeRoot = treeRoot;
+						$(this).show();
+						cb(null)
+					});
+			    }, function(cb){
+			    	$('#matrixArea > svg').fadeOut('slow',function(){
+						$(this).empty();
+						var root = init.svg.append('rect').attr({
+							x : init.padding + 30,
+							y : 20,
+							width : init.graphW,
+							height : init.graphH,
+							fill : 'none',
+							stroke : 'none',
+							id : 'matrixSvg'
+						});
+						
+						init.matrixRoot = root;
+						$(this).show();
+						cb(null, 'end');
+			    	});
+			    }
+			], function(err, result){
+				firstSetting(function(){
+					console.log(result);
+				});
+			});
+		}
+	});
 });
+
+
 	

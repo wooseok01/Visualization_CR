@@ -70,6 +70,14 @@ h1{
     font-size : 12px;
 }
 
+#dendroSelect{
+    width : 120px;
+    height : 30px;
+    position : absolute;
+    margin-left : 20px;
+    margin-top : 70px;
+}
+
 #treeArea > svg{
     overflow: visible;
     margin-top : 5px;

@@ -22,6 +22,11 @@
     </select>
     <input type="button" value="compare" class="btn-primary" id="compareButton" toggle="no">
     <input type="button" value="changeColor" class="btn-primary" id="changeColor" toggle="no">
+    
+    <select id="dendroSelect">
+      <option value="wholeDendro">WholeDendro</option>
+      <option value="testDendro">TestDendro</option>
+    </select>
   </div>
   
   <div id="matrixArea">
